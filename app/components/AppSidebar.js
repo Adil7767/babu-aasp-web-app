@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -11,8 +12,10 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 import { LayoutDashboard, Building2, Users, Package, MessageSquare, User } from 'lucide-react';
 
 const navByRole = {
@@ -40,13 +43,18 @@ const navByRole = {
 
 export default function AppSidebar({ user }) {
   const pathname = usePathname();
+  const { setOpenMobile, isMobile } = useSidebar();
   const role = user?.role || 'USER';
   const items = navByRole[role] || navByRole.USER;
   const loading = !user;
 
+  useEffect(() => {
+    if (isMobile) setOpenMobile(false);
+  }, [pathname, isMobile, setOpenMobile]);
+
   return (
     <Sidebar collapsible="offcanvas" className="border-r border-border">
-      <SidebarContent>
+      <SidebarContent className="pt-14">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -62,7 +70,13 @@ export default function AppSidebar({ user }) {
                 const active = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
                 const Icon = item.icon;
                 return (
-                  <SidebarMenuItem key={item.href}>
+                  <SidebarMenuItem
+                    key={item.href}
+                    className={cn(
+                  active &&
+                    'rounded-md bg-sidebar-accent [&_a]:bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground border-l-2 border-l-primary'
+                )}
+                  >
                     <SidebarMenuButton
                       render={
                         <Link href={item.href} className="flex items-center gap-2">
@@ -81,7 +95,13 @@ export default function AppSidebar({ user }) {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
+          <SidebarMenuItem
+            className={cn(
+              !loading &&
+                pathname === '/profile' &&
+                'rounded-md bg-sidebar-accent [&_a]:bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground border-l-2 border-l-primary'
+            )}
+          >
             {loading ? (
               <Skeleton className="h-8 w-full rounded-md" />
             ) : (

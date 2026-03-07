@@ -1,15 +1,12 @@
 'use client';
 
-import {
-  SidebarProvider,
-  SidebarInset,
-} from '@/components/ui/sidebar';
+import { SidebarInset } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
 import AppHeader from './AppHeader';
 
 export default function AppLayout({ user, title, subtitle, children, maxWidth = 'max-w-5xl' }) {
   return (
-    <SidebarProvider>
+    <>
       <AppSidebar user={user} />
       <SidebarInset>
         <AppHeader user={user} title={title} subtitle={subtitle} />
@@ -17,6 +14,6 @@ export default function AppLayout({ user, title, subtitle, children, maxWidth = 
           {children}
         </main>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

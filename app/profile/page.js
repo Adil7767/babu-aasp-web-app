@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -26,6 +26,8 @@ export default function ProfilePage() {
   const [pwLoading, setPwLoading] = useState(false);
   const [pwSaved, setPwSaved] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const uploadInputRef = useRef(null);
 
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
@@ -132,6 +134,31 @@ export default function ProfilePage() {
     );
   }
 
+  async function handleAvatarUpload(e) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setAvatarUploading(true);
+    setAvatarError(false);
+    try {
+      const form = new FormData();
+      form.append('file', f);
+      form.append('folder', 'avatars');
+      const res = await fetch('/api/upload', { method: 'POST', credentials: 'include', body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || 'Upload failed');
+        return;
+      }
+      setEdit((p) => ({ ...p, avatar_url: data.url }));
+      toast.success('Image uploaded');
+    } catch (err) {
+      toast.error('Upload failed');
+    } finally {
+      setAvatarUploading(false);
+      e.target.value = '';
+    }
+  }
+
   const displayAvatar = (edit.avatar_url?.trim() || profile?.avatar_url) && !avatarError;
   const initial = (profile?.full_name || user?.full_name || 'U').charAt(0).toUpperCase();
 
@@ -165,9 +192,15 @@ export default function ProfilePage() {
                   {!displayAvatar && (
                     <span className="text-3xl font-semibold text-muted-foreground">{initial}</span>
                   )}
-                  <span className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <button
+                    type="button"
+                    onClick={() => uploadInputRef.current?.click()}
+                    disabled={avatarUploading}
+                    className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                    aria-label="Upload photo"
+                  >
                     <Camera className="h-4 w-4" />
-                  </span>
+                  </button>
                 </div>
                 <p className="text-xs text-muted-foreground text-center">Shown in header</p>
               </div>
@@ -179,9 +212,29 @@ export default function ProfilePage() {
                     type="url"
                     value={edit.avatar_url}
                     onChange={(e) => setEdit((p) => ({ ...p, avatar_url: e.target.value }))}
-                    placeholder="https://…"
+                    placeholder="https://… or upload below"
                     className="w-full"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label>Or upload image (S3 / Cloudinary)</Label>
+                  <input
+                    ref={uploadInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    className="hidden"
+                    onChange={handleAvatarUpload}
+                    disabled={avatarUploading}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={avatarUploading}
+                    onClick={() => uploadInputRef.current?.click()}
+                  >
+                    {avatarUploading ? 'Uploading…' : 'Choose image to upload'}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">JPEG, PNG, GIF or WebP, max 5 MB.</p>
                 </div>
               </div>
             </div>

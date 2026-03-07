@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { User, Home, LogOut, ChevronDown } from 'lucide-react';
@@ -56,20 +55,18 @@ export default function AppHeader({ user, title, subtitle }) {
           <Skeleton className="h-9 w-9 rounded-full shrink-0" />
         ) : (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="flex items-center gap-2 text-foreground hover:bg-accent hover:text-accent-foreground rounded-full pl-1 pr-2 py-1.5">
-              {avatarUrl ? (
-                <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-border">
-                  <Image src={avatarUrl} alt="" width={36} height={36} className="object-cover" unoptimized />
-                </span>
-              ) : (
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-primary text-sm font-semibold shrink-0">
-                  {initial}
-                </span>
-              )}
-              <span className="hidden sm:inline font-medium max-w-[120px] truncate">{user?.full_name || 'Account'}</span>
-              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-            </Button>
+          <DropdownMenuTrigger className="flex items-center gap-2 text-foreground hover:bg-accent hover:text-accent-foreground rounded-full pl-1 pr-2 py-1.5 border-0 bg-transparent cursor-pointer font-medium text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            {avatarUrl ? (
+              <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-border">
+                <Image src={avatarUrl} alt="" width={36} height={36} className="object-cover" unoptimized />
+              </span>
+            ) : (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-primary text-sm font-semibold shrink-0">
+                {initial}
+              </span>
+            )}
+            <span className="hidden sm:inline font-medium max-w-[120px] truncate">{user?.full_name || 'Account'}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-60">
             <DropdownMenuLabel className="font-normal">

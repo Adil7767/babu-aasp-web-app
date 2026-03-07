@@ -11,6 +11,7 @@ export default {
       },
       colors: {
         primary: {
+          DEFAULT: 'var(--primary)',
           50: '#f0fdfa',
           100: '#ccfbf1',
           200: '#99f6e4',
@@ -22,6 +23,7 @@ export default {
           800: '#115e59',
           900: '#134e4a',
         },
+        'primary-foreground': 'var(--primary-foreground)',
         surface: {
           DEFAULT: '#f8fafc',
           card: '#ffffff',
