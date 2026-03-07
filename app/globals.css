@@ -4,77 +4,68 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--background);
     color: var(--foreground);
   }
+  /* Mobile-friendly tap and touch */
+  @media (hover: none) {
+    button, a, [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+  }
+  /* Better focus for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  button:disabled, [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
   :root {
-
-    --background: oklch(1 0 0);
-
-    --foreground: oklch(0.145 0 0);
-
+    --background: oklch(0.985 0.002 247);
+    --foreground: oklch(0.18 0.02 260);
     --card: oklch(1 0 0);
-
-    --card-foreground: oklch(0.145 0 0);
-
+    --card-foreground: oklch(0.18 0.02 260);
     --popover: oklch(1 0 0);
-
-    --popover-foreground: oklch(0.145 0 0);
-
-    --primary: oklch(0.55 0.12 175);
-
-    --primary-foreground: oklch(0.985 0 0);
-
-    --secondary: oklch(0.97 0 0);
-
-    --secondary-foreground: oklch(0.205 0 0);
-
-    --muted: oklch(0.97 0 0);
-
-    --muted-foreground: oklch(0.556 0 0);
-
-    --accent: oklch(0.97 0 0);
-
-    --accent-foreground: oklch(0.205 0 0);
-
-    --destructive: oklch(0.58 0.22 27);
-
-    --border: oklch(0.922 0 0);
-
-    --input: oklch(0.922 0 0);
-
-    --ring: oklch(0.708 0 0);
-
-    --chart-1: oklch(0.809 0.105 251.813);
-
-    --chart-2: oklch(0.623 0.214 259.815);
-
-    --chart-3: oklch(0.546 0.245 262.881);
-
-    --chart-4: oklch(0.488 0.243 264.376);
-
-    --chart-5: oklch(0.424 0.199 265.638);
-
-    --radius: 0.625rem;
-
-    --sidebar: oklch(0.985 0 0);
-
-    --sidebar-foreground: oklch(0.145 0 0);
-
-    --sidebar-primary: oklch(0.205 0 0);
-
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-
-    --sidebar-accent: oklch(0.97 0 0);
-
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-
-    --sidebar-border: oklch(0.922 0 0);
-
-    --sidebar-ring: oklch(0.708 0 0)
+    --popover-foreground: oklch(0.18 0.02 260);
+    --primary: oklch(0.52 0.14 175);
+    --primary-foreground: oklch(0.99 0 0);
+    --secondary: oklch(0.965 0.01 247);
+    --secondary-foreground: oklch(0.25 0.02 260);
+    --muted: oklch(0.965 0.008 247);
+    --muted-foreground: oklch(0.48 0.02 260);
+    --accent: oklch(0.96 0.02 175);
+    --accent-foreground: oklch(0.25 0.02 260);
+    --destructive: oklch(0.55 0.22 25);
+    --border: oklch(0.92 0.01 247);
+    --input: oklch(0.92 0.01 247);
+    --ring: oklch(0.52 0.14 175);
+    --chart-1: oklch(0.52 0.14 175);
+    --chart-2: oklch(0.62 0.19 260);
+    --chart-3: oklch(0.55 0.22 25);
+    --chart-4: oklch(0.65 0.15 160);
+    --chart-5: oklch(0.6 0.12 300);
+    --radius: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+    --sidebar: oklch(0.995 0.002 247);
+    --sidebar-foreground: oklch(0.2 0.02 260);
+    --sidebar-primary: oklch(0.52 0.14 175);
+    --sidebar-primary-foreground: oklch(0.99 0 0);
+    --sidebar-accent: oklch(0.96 0.02 175);
+    --sidebar-accent-foreground: oklch(0.25 0.02 260);
+    --sidebar-border: oklch(0.93 0.01 247);
+    --sidebar-ring: oklch(0.52 0.14 175);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.04);
   }
   .dark {
 
@@ -153,19 +144,122 @@
 }
 
 @layer components {
+  /* Use plain CSS (no @apply) so Tailwind doesn't fail resolving theme classes in @layer components */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s ease;
   }
+  .btn-primary:hover { opacity: 0.95; }
+  .btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  }
+  .btn-primary:disabled { opacity: 0.5; }
+
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background-color: var(--background);
+    color: var(--foreground);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
   }
+  .btn-secondary:hover { background-color: var(--muted); }
+  .btn-secondary:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  }
+
   .card {
-    @apply rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card;
+    border-radius: 1.25rem;
+    border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+    background-color: var(--card);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
   }
+
   .input-field {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 placeholder-slate-400 transition focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20;
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--input);
+    background-color: var(--background);
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    transition: border-color, box-shadow 0.15s ease;
   }
+  .input-field::placeholder { color: var(--muted-foreground); }
+  .input-field:focus {
+    border-color: var(--ring);
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 20%, transparent);
+  }
+
   .label {
-    @apply mb-1.5 block text-sm font-medium text-slate-600;
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--foreground);
+  }
+
+  .page-subtitle {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin-top: 0.125rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.9375rem;
+    border-radius: 1.25rem;
+    border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+    background-color: var(--card);
+    box-shadow: var(--shadow-md);
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+    background-color: var(--card);
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .link-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
   }
 }

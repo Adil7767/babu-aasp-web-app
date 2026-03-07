@@ -8,9 +8,9 @@ export default function AppLayout({ user, title, subtitle, children, maxWidth = 
   return (
     <>
       <AppSidebar user={user} />
-      <SidebarInset>
+      <SidebarInset className="min-w-0 flex flex-col">
         <AppHeader user={user} title={title} subtitle={subtitle} />
-        <main className={`flex-1 mx-auto w-full ${maxWidth} px-4 py-6`}>
+        <main className={`flex-1 mx-auto w-full ${maxWidth} px-4 sm:px-6 py-6 sm:py-8`}>
           {children}
         </main>
       </SidebarInset>

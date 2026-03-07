@@ -23,22 +23,22 @@ export default function AppHeader({ user, title, subtitle }) {
   const loading = !user;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <SidebarTrigger className="-ml-1" />
-          <Link href={homeHref || '#'} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg overflow-hidden ring-offset-background transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+    <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center gap-3">
+          <SidebarTrigger className="-ml-1 rounded-xl min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0" />
+          <Link href={homeHref || '#'} className="flex h-9 w-9 min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-muted/50 ring-1 ring-border/80 transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20">
             <Image src="/appicon.png" alt="Logo" width={36} height={36} className="object-contain" />
           </Link>
           <div>
             {loading ? (
               <>
-                <Skeleton className="h-4 w-28 mb-1" />
-                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-4 w-28 mb-1 rounded-md" />
+                <Skeleton className="h-3 w-20 rounded-md" />
               </>
             ) : (
               <>
-                <h1 className="text-base font-semibold text-foreground leading-tight">
+                <h1 className="text-base font-semibold text-foreground leading-tight tracking-tight">
                   {title || (isSuperAdmin ? 'Super Admin' : isAdminOrStaff ? 'Admin' : 'Dashboard')}
                 </h1>
                 {subtitle ? (
@@ -55,7 +55,7 @@ export default function AppHeader({ user, title, subtitle }) {
           <Skeleton className="h-9 w-9 rounded-full shrink-0" />
         ) : (
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 text-foreground hover:bg-accent hover:text-accent-foreground rounded-full pl-1 pr-2 py-1.5 border-0 bg-transparent cursor-pointer font-medium text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+          <DropdownMenuTrigger className="flex items-center gap-2 text-foreground hover:bg-muted/80 hover:text-foreground rounded-xl pl-1 pr-2.5 py-1.5 border-0 bg-transparent cursor-pointer font-medium text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 transition-colors">
             {avatarUrl ? (
               <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-border">
                 <Image src={avatarUrl} alt="" width={36} height={36} className="object-cover" unoptimized />
@@ -68,7 +68,7 @@ export default function AppHeader({ user, title, subtitle }) {
             <span className="hidden sm:inline font-medium max-w-[120px] truncate">{user?.full_name || 'Account'}</span>
             <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-60">
+          <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-lg border-border/80">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col gap-0.5">
                 <p className="text-sm font-medium truncate">{user?.full_name}</p>

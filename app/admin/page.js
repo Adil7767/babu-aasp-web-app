@@ -73,53 +73,53 @@ export default function AdminPage() {
 
   return (
     <AppLayout user={user} title="Admin">
-      <div>
+      <div className="space-y-8">
         {stats && (
           <>
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">Overview · {stats.year}</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-              <div className="card border-l-4 border-l-primary-500">
-                <p className="text-sm font-medium text-slate-500">Total income</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{Number(stats.total_income).toFixed(2)}</p>
+            <h2 className="section-title text-lg mb-2">Overview · {stats.year}</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="card border-l-4 border-l-primary">
+                <p className="section-title">Total income</p>
+                <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{Number(stats.total_income).toFixed(2)}</p>
               </div>
-              <div className="card border-l-4 border-l-rose-400">
-                <p className="text-sm font-medium text-slate-500">Total expense</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{Number(stats.total_expense).toFixed(2)}</p>
+              <div className="card border-l-4 border-l-destructive">
+                <p className="section-title">Total expense</p>
+                <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{Number(stats.total_expense).toFixed(2)}</p>
               </div>
-              <div className="card border-l-4 border-l-emerald-500">
-                <p className="text-sm font-medium text-slate-500">Profit</p>
-                <p className="text-2xl font-bold text-emerald-600 mt-1">{Number(stats.profit).toFixed(2)}</p>
+              <div className="card border-l-4 border-l-primary">
+                <p className="section-title">Profit</p>
+                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{Number(stats.profit).toFixed(2)}</p>
               </div>
-              <div className="card border-l-4 border-l-slate-400">
-                <p className="text-sm font-medium text-slate-500">Customers</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_users} <span className="text-sm font-normal text-slate-400">({stats.active_customers ?? stats.total_users} active)</span></p>
+              <div className="card border-l-4 border-l-muted-foreground">
+                <p className="section-title">Customers</p>
+                <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{stats.total_users} <span className="text-sm font-normal text-muted-foreground">({stats.active_customers ?? stats.total_users} active)</span></p>
               </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3 mb-8">
-              <div className="card bg-slate-50/50">
-                <p className="text-sm font-medium text-slate-500">Packages</p>
-                <p className="text-lg font-semibold text-slate-800 mt-1">{stats.active_packages} active · {stats.expired_packages} expired</p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="card bg-muted/30">
+                <p className="section-title">Packages</p>
+                <p className="text-lg font-semibold text-foreground mt-1">{stats.active_packages} active · {stats.expired_packages} expired</p>
               </div>
-              <div className="card bg-amber-50/50">
-                <p className="text-sm font-medium text-slate-500">Complaints</p>
-                <p className="text-lg font-semibold text-slate-800 mt-1">{stats.complaints_pending ?? 0} pending · {stats.complaints_in_progress ?? 0} in progress · {stats.complaints_resolved ?? 0} resolved</p>
+              <div className="card bg-amber-500/5 border-amber-500/20">
+                <p className="section-title">Complaints</p>
+                <p className="text-lg font-semibold text-foreground mt-1">{stats.complaints_pending ?? 0} pending · {stats.complaints_in_progress ?? 0} in progress · {stats.complaints_resolved ?? 0} resolved</p>
               </div>
-              <div className="card bg-primary-50/50">
-                <p className="text-sm font-medium text-slate-500">Inactive customers</p>
-                <p className="text-lg font-semibold text-slate-800 mt-1">{stats.inactive_customers ?? 0}</p>
+              <div className="card bg-primary/5 border-primary/20">
+                <p className="section-title">Inactive customers</p>
+                <p className="text-lg font-semibold text-foreground mt-1">{stats.inactive_customers ?? 0}</p>
               </div>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2 mb-8">
+            <div className="grid gap-6 lg:grid-cols-2">
               <div className="card">
-                <h3 className="text-sm font-medium text-slate-500 mb-4">Income vs expense vs profit</h3>
+                <h3 className="section-title mb-4">Income vs expense vs profit</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={financeChartData} layout="vertical" margin={{ left: 50, right: 16 }}>
-                      <XAxis type="number" tick={{ fontSize: 11 }} stroke="#64748b" tickFormatter={(v) => v} />
-                      <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} stroke="#64748b" width={80} />
-                      <Tooltip formatter={(v) => [Number(v).toFixed(2), '']} contentStyle={{ borderRadius: 8 }} />
-                      <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                      <XAxis type="number" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" tickFormatter={(v) => v} />
+                      <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" width={80} />
+                      <Tooltip formatter={(v) => [Number(v).toFixed(2), '']} contentStyle={{ borderRadius: 12 }} />
+                      <Bar dataKey="value" radius={[0, 6, 6, 0]}>
                         {financeChartData.map((entry, i) => (
                           <Cell key={i} fill={entry.fill} />
                         ))}
@@ -129,7 +129,7 @@ export default function AdminPage() {
                 </div>
               </div>
               <div className="card">
-                <h3 className="text-sm font-medium text-slate-500 mb-4">Complaints by status</h3>
+                <h3 className="section-title mb-4">Complaints by status</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -148,7 +148,7 @@ export default function AdminPage() {
                           <Cell key={i} fill={entry.fill} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(v) => [v, 'Count']} contentStyle={{ borderRadius: 8 }} />
+                      <Tooltip formatter={(v) => [v, 'Count']} contentStyle={{ borderRadius: 12 }} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
@@ -157,19 +157,19 @@ export default function AdminPage() {
             </div>
           </>
         )}
-        <div className="flex flex-wrap gap-3">
-          <Link href="/admin/complaints" className="card flex items-center gap-3 w-full sm:w-auto hover:shadow-soft hover:border-primary-200 transition group">
-            <span className="text-2xl">🎫</span>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/admin/complaints" className="link-card w-full sm:w-auto sm:min-w-[280px] group">
+            <span className="text-2xl" aria-hidden>🎫</span>
             <div>
-              <p className="font-semibold text-slate-800 group-hover:text-primary-600">Complaints</p>
-              <p className="text-sm text-slate-500">Manage support tickets</p>
+              <p className="font-semibold text-foreground group-hover:text-primary">Complaints</p>
+              <p className="text-sm text-muted-foreground">Manage support tickets</p>
             </div>
           </Link>
-          <Link href="/" className="card flex items-center gap-3 w-full sm:w-auto hover:shadow-soft hover:border-primary-200 transition group">
-            <span className="text-2xl">🏠</span>
+          <Link href="/" className="link-card w-full sm:w-auto sm:min-w-[280px] group">
+            <span className="text-2xl" aria-hidden>🏠</span>
             <div>
-              <p className="font-semibold text-slate-800 group-hover:text-primary-600">Home</p>
-              <p className="text-sm text-slate-500">Back to portal</p>
+              <p className="font-semibold text-foreground group-hover:text-primary">Home</p>
+              <p className="text-sm text-muted-foreground">Back to portal</p>
             </div>
           </Link>
         </div>

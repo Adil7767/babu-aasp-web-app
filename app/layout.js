@@ -16,6 +16,12 @@ export const metadata = {
   icons: { icon: '/appicon.png' },
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={jakarta.variable} suppressHydrationWarning>
@@ -23,7 +29,13 @@ export default function RootLayout({ children }) {
         <TooltipProvider>
           <SidebarProvider>
             {children}
-            <Toaster position="top-center" toastOptions={{ duration: 5000 }} />
+            <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 5000,
+              style: { borderRadius: '12px', padding: '14px 18px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.08)' },
+            }}
+          />
           </SidebarProvider>
         </TooltipProvider>
       </body>

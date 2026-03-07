@@ -68,21 +68,21 @@ export default function DashboardPage() {
   return (
     <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">
       <div className="space-y-8">
-        <div className="card border-l-4 border-l-primary-500">
-          <h2 className="text-sm font-medium text-slate-500">Total paid</h2>
-          <p className="text-3xl font-bold text-slate-800 mt-1">{totalPaid.toFixed(2)}</p>
+        <div className="card border-l-4 border-l-primary">
+          <h2 className="section-title">Total paid</h2>
+          <p className="text-3xl font-bold text-foreground mt-1 tracking-tight">{totalPaid.toFixed(2)}</p>
         </div>
 
         {paymentsByMonth.length > 0 && (
           <section className="card">
-            <h2 className="text-sm font-medium text-slate-500 mb-4">Payments by month</h2>
+            <h2 className="section-title mb-4">Payments by month</h2>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={paymentsByMonth} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="#64748b" />
-                  <YAxis tick={{ fontSize: 11 }} stroke="#64748b" tickFormatter={(v) => v} />
-                  <Tooltip formatter={(v) => [Number(v).toFixed(2), 'Amount']} contentStyle={{ borderRadius: 8 }} />
-                  <Bar dataKey="amount" fill="#0d9488" radius={[4, 4, 0, 0]} name="Amount" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+                  <YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" tickFormatter={(v) => v} />
+                  <Tooltip formatter={(v) => [Number(v).toFixed(2), 'Amount']} contentStyle={{ borderRadius: 12 }} />
+                  <Bar dataKey="amount" fill="var(--primary)" radius={[6, 6, 0, 0]} name="Amount" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -90,20 +90,20 @@ export default function DashboardPage() {
         )}
 
         <section>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">My packages</h2>
+          <h2 className="section-title mb-4">My packages</h2>
           {packages.length === 0 ? (
-            <div className="card text-slate-500 text-center py-8">No package yet. Request one from admin.</div>
+            <div className="empty-state">No package yet. Request one from your admin.</div>
           ) : (
             <div className="space-y-3">
               {packages.map((s) => (
                 <div key={s.id} className="card flex items-center justify-between flex-wrap gap-2">
                   <div>
-                    <p className="font-medium text-slate-800">{s.package?.name}</p>
-                    <p className="text-sm text-slate-500">Till {new Date(s.end_date).toLocaleDateString()}</p>
+                    <p className="font-semibold text-foreground">{s.package?.name}</p>
+                    <p className="text-sm text-muted-foreground">Till {new Date(s.end_date).toLocaleDateString()}</p>
                   </div>
                   <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                    s.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' :
-                    s.status === 'EXPIRED' ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-700'
+                    s.status === 'ACTIVE' ? 'bg-primary/10 text-primary' :
+                    s.status === 'EXPIRED' ? 'bg-muted text-muted-foreground' : 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
                   }`}>
                     {s.status}
                   </span>
@@ -114,15 +114,15 @@ export default function DashboardPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">Recent payments</h2>
+          <h2 className="section-title mb-4">Recent payments</h2>
           {payments.length === 0 ? (
-            <div className="card text-slate-500 text-center py-6">No payments recorded.</div>
+            <div className="empty-state">No payments recorded yet.</div>
           ) : (
-            <div className="card divide-y divide-slate-100">
+            <div className="card divide-y divide-border">
               {payments.slice(0, 10).map((p) => (
                 <div key={p.id} className="flex justify-between items-center py-3 first:pt-0 last:pb-0">
-                  <span className="text-slate-600">{p.month}/{p.year}</span>
-                  <span className="font-medium text-slate-800">{Number(p.amount).toFixed(2)}</span>
+                  <span className="text-muted-foreground">{p.month}/{p.year}</span>
+                  <span className="font-semibold text-foreground">{Number(p.amount).toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -130,17 +130,17 @@ export default function DashboardPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">Complaints & support</h2>
+          <h2 className="section-title mb-4">Complaints & support</h2>
           <div className="card">
-            <p className="text-slate-600 text-sm mb-4">Submit and track support tickets for connection or billing issues.</p>
+            <p className="text-muted-foreground text-sm mb-4">Submit and track support tickets for connection or billing issues.</p>
             <div className="flex flex-wrap gap-2">
               {complaints.slice(0, 3).map((c) => (
-                <span key={c.id} className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                <span key={c.id} className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
                   {c.category.replace('_', ' ')} · {c.status}
                 </span>
               ))}
             </div>
-            <Link href="/dashboard/complaints" className="btn-primary mt-4 inline-block text-center">
+            <Link href="/dashboard/complaints" className="btn-primary mt-4 inline-flex text-center rounded-xl transition-opacity hover:opacity-95">
               View all & submit complaint
             </Link>
           </div>

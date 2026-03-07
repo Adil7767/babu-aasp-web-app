@@ -166,10 +166,10 @@ export default function ProfilePage() {
     <AppLayout user={user} title="Profile" subtitle="Update your account" maxWidth="max-w-2xl">
       <div className="space-y-8">
         {/* Profile picture & info card */}
-        <Card>
+        <Card className="rounded-2xl border-border/80 shadow-md">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+              <User className="h-5 w-5 text-primary" />
               Profile & picture
             </CardTitle>
             <CardDescription>Update your display name, email, and profile photo (paste an image URL).</CardDescription>
@@ -177,7 +177,7 @@ export default function ProfilePage() {
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-6 items-start">
               <div className="flex flex-col items-center gap-3">
-                <div className="relative h-24 w-24 rounded-full overflow-hidden bg-muted ring-2 ring-border flex items-center justify-center">
+                <div className="relative h-24 w-24 rounded-full overflow-hidden bg-muted ring-2 ring-border flex items-center justify-center shrink-0">
                   {displayAvatar ? (
                     <Image
                       src={edit.avatar_url?.trim() || profile?.avatar_url}
@@ -196,7 +196,7 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => uploadInputRef.current?.click()}
                     disabled={avatarUploading}
-                    className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                    className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-opacity focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     aria-label="Upload photo"
                   >
                     <Camera className="h-4 w-4" />
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                     value={edit.avatar_url}
                     onChange={(e) => setEdit((p) => ({ ...p, avatar_url: e.target.value }))}
                     placeholder="https://… or upload below"
-                    className="w-full"
+                    className="w-full h-10 rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
@@ -231,6 +231,7 @@ export default function ProfilePage() {
                     variant="secondary"
                     disabled={avatarUploading}
                     onClick={() => uploadInputRef.current?.click()}
+                    className="rounded-xl"
                   >
                     {avatarUploading ? 'Uploading…' : 'Choose image to upload'}
                   </Button>
@@ -240,12 +241,12 @@ export default function ProfilePage() {
             </div>
 
             {error && (
-              <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive font-medium">
                 {error}
               </div>
             )}
             {saved && (
-              <p className="text-sm text-emerald-600 font-medium">Profile updated.</p>
+              <p className="text-sm font-medium text-primary">Profile updated.</p>
             )}
 
             <form onSubmit={handleSaveProfile} className="space-y-4">
@@ -258,6 +259,7 @@ export default function ProfilePage() {
                     value={edit.full_name}
                     onChange={(e) => setEdit((p) => ({ ...p, full_name: e.target.value }))}
                     placeholder="Your name"
+                    className="rounded-xl h-10"
                   />
                 </div>
                 <div className="space-y-2">
@@ -269,6 +271,7 @@ export default function ProfilePage() {
                     onChange={(e) => setEdit((p) => ({ ...p, email: e.target.value }))}
                     placeholder="you@example.com"
                     disabled={profile?.role !== 'ADMIN'}
+                    className="rounded-xl h-10"
                   />
                   {profile?.role !== 'ADMIN' && (
                     <p className="text-xs text-muted-foreground">Only admins can change email.</p>
@@ -283,6 +286,7 @@ export default function ProfilePage() {
                   value={edit.phone}
                   onChange={(e) => setEdit((p) => ({ ...p, phone: e.target.value }))}
                   placeholder="Optional"
+                  className="rounded-xl h-10"
                 />
               </div>
               <div className="space-y-2">
@@ -293,10 +297,10 @@ export default function ProfilePage() {
                   onChange={(e) => setEdit((p) => ({ ...p, address: e.target.value }))}
                   placeholder="Optional"
                   rows={3}
-                  className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                 />
               </div>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="rounded-xl">
                 {loading ? 'Saving…' : 'Save profile'}
               </Button>
             </form>
@@ -304,22 +308,22 @@ export default function ProfilePage() {
         </Card>
 
         {/* Change password */}
-        <Card>
+        <Card className="rounded-2xl border-border/80 shadow-md">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+              <Lock className="h-5 w-5 text-primary" />
               Change password
             </CardTitle>
             <CardDescription>Set a new password. You will stay signed in.</CardDescription>
           </CardHeader>
           <CardContent>
             {pwError && (
-              <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive mb-4">
+              <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive font-medium mb-4">
                 {pwError}
               </div>
             )}
             {pwSaved && (
-              <p className="text-sm text-emerald-600 font-medium mb-4">Password changed.</p>
+              <p className="text-sm font-medium text-primary mb-4">Password changed.</p>
             )}
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-2">
@@ -331,6 +335,7 @@ export default function ProfilePage() {
                   onChange={(e) => setChangePw((p) => ({ ...p, current: e.target.value }))}
                   placeholder="••••••••"
                   autoComplete="current-password"
+                  className="rounded-xl h-10"
                 />
               </div>
               <div className="space-y-2">
@@ -343,6 +348,7 @@ export default function ProfilePage() {
                   placeholder="Min 6 characters"
                   minLength={6}
                   autoComplete="new-password"
+                  className="rounded-xl h-10"
                 />
               </div>
               <div className="space-y-2">
@@ -354,9 +360,10 @@ export default function ProfilePage() {
                   onChange={(e) => setChangePw((p) => ({ ...p, confirm: e.target.value }))}
                   placeholder="••••••••"
                   autoComplete="new-password"
+                  className="rounded-xl h-10"
                 />
               </div>
-              <Button type="submit" disabled={pwLoading} variant="secondary">
+              <Button type="submit" disabled={pwLoading} variant="secondary" className="rounded-xl">
                 {pwLoading ? 'Updating…' : 'Change password'}
               </Button>
             </form>

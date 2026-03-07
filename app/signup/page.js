@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -67,19 +68,19 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background px-4 py-12">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-8 pb-8 text-center space-y-6">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 text-2xl font-bold">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/40 to-background px-4 py-12">
+        <Card className="w-full max-w-[420px] shadow-lg border-border/80 rounded-2xl overflow-hidden">
+          <CardContent className="pt-10 pb-10 text-center space-y-6">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 text-2xl font-bold shadow-sm">
               ✓
             </div>
-            <div className="space-y-1">
-              <h1 className="text-xl font-bold">Registration successful</h1>
-              <p className="text-sm text-muted-foreground">
+            <div className="space-y-2">
+              <h1 className="page-title text-xl">Registration successful</h1>
+              <p className="page-subtitle">
                 Sign in and submit your subscription payment (JazzCash, EasyPaisa, or bank transfer) for Super Admin approval.
               </p>
             </div>
-            <Link href="/login" className={cn(buttonVariants(), 'w-full h-10 inline-flex items-center justify-center')}>
+            <Link href="/login" className={cn(buttonVariants(), 'w-full h-11 rounded-xl font-semibold inline-flex items-center justify-center')}>
               Sign in
             </Link>
           </CardContent>
@@ -89,27 +90,29 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background px-4 py-12">
-      <div className="w-full max-w-md space-y-6">
-        <div className="flex flex-col items-center text-center gap-2">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ring-2 ring-primary/20">
-            <Image src="/appicon.png" alt="NETSCALE" width={48} height={48} className="object-contain" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/40 to-background px-4 py-12">
+      <div className="w-full max-w-[420px] space-y-8">
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 shadow-lg ring-1 ring-primary/10">
+            <Image src="/appicon.png" alt="NETSCALE" width={52} height={52} className="object-contain" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Register your ISP</h1>
-          <p className="text-sm text-muted-foreground">
-            Create an account and choose a plan. Payment is manual; Super Admin will activate your account.
-          </p>
+          <div>
+            <h1 className="page-title">Register your ISP</h1>
+            <p className="page-subtitle">
+              Create an account and choose a plan. Payment is manual; Super Admin will activate your account.
+            </p>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-lg">Create account</CardTitle>
+        <Card className="shadow-lg border-border/80 rounded-2xl overflow-hidden">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xl font-semibold">Create account</CardTitle>
             <CardDescription>Company and admin details</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <CardContent className="pt-2">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
-                <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive font-medium">
                   {error}
                 </div>
               )}
@@ -122,7 +125,7 @@ export default function SignupPage() {
                   onChange={(e) => setCompanyName(e.target.value)}
                   required
                   placeholder="e.g. Babu ISP"
-                  className="h-10"
+                  className="h-11 rounded-xl border-input"
                 />
               </div>
               <div className="space-y-2">
@@ -134,7 +137,7 @@ export default function SignupPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   required
                   placeholder="Admin name"
-                  className="h-10"
+                  className="h-11 rounded-xl border-input"
                 />
               </div>
               <div className="space-y-2">
@@ -146,7 +149,7 @@ export default function SignupPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="admin@yourisp.com"
-                  className="h-10"
+                  className="h-11 rounded-xl border-input"
                 />
               </div>
               <div className="space-y-2">
@@ -159,7 +162,7 @@ export default function SignupPage() {
                   required
                   minLength={6}
                   placeholder="••••••••"
-                  className="h-10"
+                  className="h-11 rounded-xl border-input"
                 />
               </div>
               <div className="space-y-2">
@@ -168,7 +171,7 @@ export default function SignupPage() {
                   id="plan"
                   value={plan}
                   onChange={(e) => setPlan(e.target.value)}
-                  className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-11 w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {plans.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -178,15 +181,22 @@ export default function SignupPage() {
                 </select>
                 <p className="text-xs text-muted-foreground">Pay via JazzCash / EasyPaisa after signup.</p>
               </div>
-              <Button type="submit" disabled={loading} className="w-full h-10">
-                {loading ? 'Registering…' : 'Register'}
+              <Button type="submit" disabled={loading} className="w-full h-11 rounded-xl font-semibold" aria-busy={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
+                    <span>Registering…</span>
+                  </>
+                ) : (
+                  'Register'
+                )}
               </Button>
             </form>
           </CardContent>
         </Card>
 
         <p className="text-center text-sm text-muted-foreground">
-          <Link href="/login" className="font-medium text-foreground hover:underline">Already have an account? Sign in</Link>
+          <Link href="/login" className="font-semibold text-foreground hover:underline">Already have an account? Sign in</Link>
         </p>
       </div>
     </div>

@@ -53,35 +53,44 @@ export default function AppSidebar({ user }) {
   }, [pathname, isMobile, setOpenMobile]);
 
   return (
-    <Sidebar collapsible="offcanvas" className="border-r border-border">
-      <SidebarContent className="pt-14">
+    <Sidebar collapsible="icon" side="left" className="border-r border-border bg-sidebar">
+      <SidebarContent className="pt-4">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-0.5">
               {loading ? (
                 <>
                   {[1, 2, 3, 4].map((i) => (
                     <SidebarMenuItem key={i}>
-                      <Skeleton className="h-8 w-full rounded-md" />
+                      <Skeleton className="h-9 w-full rounded-xl" />
                     </SidebarMenuItem>
                   ))}
                 </>
               ) : items.map((item) => {
-                const active = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                const normalizedPath = (pathname || '').replace(/\/$/, '') || '/';
+                const exactOnly = ['/admin', '/dashboard', '/super-admin'].includes(item.href);
+                const active =
+                  normalizedPath === item.href ||
+                  (!exactOnly && (normalizedPath.startsWith(item.href + '/') || normalizedPath === item.href));
                 const Icon = item.icon;
                 return (
                   <SidebarMenuItem
                     key={item.href}
+                    data-active={active ? 'true' : undefined}
                     className={cn(
-                  active &&
-                    'rounded-md bg-sidebar-accent [&_a]:bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground border-l-2 border-l-primary'
-                )}
+                      active &&
+                        '!bg-sidebar-accent rounded-xl border-l-2 border-l-primary [&>*]:!bg-transparent [&>*]:font-semibold [&_a]:!bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground'
+                    )}
                   >
                     <SidebarMenuButton
                       render={
-                        <Link href={item.href} className="flex items-center gap-2">
+                        <Link
+                          href={item.href}
+                          className="flex items-center gap-3"
+                          data-active={active ? 'true' : undefined}
+                        >
                           {Icon && <Icon className="h-4 w-4 shrink-0" />}
-                          <span>{item.label}</span>
+                          <span className="truncate group-data-[collapsible=icon]:hidden">{item.label}</span>
                         </Link>
                       }
                       isActive={active}
@@ -93,23 +102,24 @@ export default function AppSidebar({ user }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
+      <SidebarFooter className="border-t border-border/80">
+        <SidebarMenu className="gap-0.5">
           <SidebarMenuItem
+            data-active={!loading && pathname === '/profile' ? 'true' : undefined}
             className={cn(
               !loading &&
                 pathname === '/profile' &&
-                'rounded-md bg-sidebar-accent [&_a]:bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground border-l-2 border-l-primary'
+                '!bg-sidebar-accent rounded-xl border-l-2 border-l-primary [&>*]:!bg-transparent [&_a]:!bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground'
             )}
           >
             {loading ? (
-              <Skeleton className="h-8 w-full rounded-md" />
+              <Skeleton className="h-9 w-full rounded-xl" />
             ) : (
               <SidebarMenuButton
                 render={
-                  <Link href="/profile" className="flex items-center gap-2">
+                  <Link href="/profile" className="flex items-center gap-3">
                     <User className="h-4 w-4 shrink-0" />
-                    <span>Profile</span>
+                    <span className="truncate group-data-[collapsible=icon]:hidden">Profile</span>
                   </Link>
                 }
                 isActive={pathname === '/profile'}
