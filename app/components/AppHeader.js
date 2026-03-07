@@ -23,11 +23,11 @@ export default function AppHeader({ user, title, subtitle }) {
   const loading = !user;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur-md shadow-sm">
       <div className="flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <SidebarTrigger className="-ml-1 rounded-xl min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0" />
-          <Link href={homeHref || '#'} className="flex h-9 w-9 min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-muted/50 ring-1 ring-border/80 transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20">
+          <Link href={homeHref || '#'} className="flex h-9 w-9 min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-primary/10 ring-1 ring-primary/20 transition hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20">
             <Image src="/appicon.png" alt="Logo" width={36} height={36} className="object-contain" />
           </Link>
           <div>

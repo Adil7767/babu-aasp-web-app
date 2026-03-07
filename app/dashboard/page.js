@@ -68,13 +68,13 @@ export default function DashboardPage() {
   return (
     <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">
       <div className="space-y-8">
-        <div className="card border-l-4 border-l-primary">
-          <h2 className="section-title">Total paid</h2>
-          <p className="text-3xl font-bold text-foreground mt-1 tracking-tight">{totalPaid.toFixed(2)}</p>
+        <div className="card-tinted border-l-4 border-l-primary shadow-md">
+          <h2 className="section-title text-muted-foreground">Total paid</h2>
+          <p className="text-3xl font-bold text-foreground mt-1 tracking-tight tabular-nums">{totalPaid.toFixed(2)}</p>
         </div>
 
         {paymentsByMonth.length > 0 && (
-          <section className="card">
+          <section className="card shadow-md">
             <h2 className="section-title mb-4">Payments by month</h2>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -131,7 +131,7 @@ export default function DashboardPage() {
 
         <section>
           <h2 className="section-title mb-4">Complaints & support</h2>
-          <div className="card">
+          <div className="card bg-primary/5 border-primary/20 shadow-md">
             <p className="text-muted-foreground text-sm mb-4">Submit and track support tickets for connection or billing issues.</p>
             <div className="flex flex-wrap gap-2">
               {complaints.slice(0, 3).map((c) => (

@@ -45,10 +45,10 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/40 to-background px-4 py-12">
-      <div className="w-full max-w-[420px] space-y-8">
-        <div className="flex flex-col items-center text-center gap-3">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 shadow-lg ring-1 ring-primary/10">
+    <div className="min-h-screen flex items-center justify-center bg-auth px-4 py-12 relative overflow-hidden">
+      <div className="w-full max-w-[440px] space-y-10 relative z-10 animate-fade-in-up">
+        <div className="flex flex-col items-center text-center gap-4">
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-card shadow-glass ring-1 ring-white/60">
             <Image src="/appicon.png" alt="NETSCALE" width={52} height={52} className="object-contain" />
           </div>
           <div>
@@ -57,9 +57,9 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        <Card className="shadow-lg border-border/80 rounded-2xl overflow-hidden">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl font-semibold">Reset password</CardTitle>
+        <Card className="card-glass shadow-xl overflow-hidden border-0">
+          <CardHeader className="pb-3 pt-6 px-6 sm:px-8">
+            <CardTitle className="text-xl font-semibold tracking-tight">Reset password</CardTitle>
             <CardDescription>We’ll send a link to your email</CardDescription>
           </CardHeader>
           <CardContent className="pt-2">

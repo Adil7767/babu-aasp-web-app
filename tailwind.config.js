@@ -24,11 +24,7 @@ export default {
           900: '#134e4a',
         },
         'primary-foreground': 'var(--primary-foreground)',
-        surface: {
-          DEFAULT: '#f8fafc',
-          card: '#ffffff',
-          muted: '#f1f5f9',
-        },
+        surface: 'var(--surface)',
         // shadcn semantic colors (CSS variables from globals.css)
         background: 'var(--background)',
         foreground: 'var(--foreground)',
@@ -63,18 +59,30 @@ export default {
       boxShadow: {
         sm: '0 1px 2px 0 rgb(0 0 0 / 0.04)',
         DEFAULT: '0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04)',
-        md: '0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04)',
-        lg: '0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.04)',
+        md: '0 4px 12px -2px rgb(0 0 0 / 0.06), 0 2px 6px -2px rgb(0 0 0 / 0.04)',
+        lg: '0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -2px rgb(0 0 0 / 0.04)',
+        xl: '0 20px 40px -8px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(0 0 0 / 0.03)',
         soft: '0 2px 15px -3px rgb(0 0 0 / 0.06), 0 10px 20px -2px rgb(0 0 0 / 0.04)',
         card: '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
+        glass: '0 8px 32px -8px rgb(0 0 0 / 0.08), 0 0 0 1px rgb(255 255 255 / 0.6) inset',
       },
       animation: {
-        'fade-in': 'fadeIn 0.2s ease-out',
+        'fade-in': 'fadeIn 0.3s ease-out',
+        'fade-in-up': 'fadeInUp 0.4s ease-out',
+        'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-6px)' },
         },
       },
     },

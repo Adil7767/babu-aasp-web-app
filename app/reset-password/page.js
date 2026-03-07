@@ -50,18 +50,17 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative px-4 bg-slate-900">
-      <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: 'url(/cover.png)' }} aria-hidden />
+    <div className="min-h-screen flex items-center justify-center relative px-4 bg-gradient-to-br from-primary/15 via-background to-accent/30">
       <div className="relative z-10 w-full max-w-md">
-        <div className="card text-center mb-8 bg-white/95 backdrop-blur">
+        <div className="card text-center mb-8 shadow-lg">
           <div className="flex justify-center mb-6">
             <Image src="/appicon.png" alt="NETSCALE" width={80} height={80} priority className="object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Set new password</h1>
-          <p className="text-slate-500 mt-1 text-sm">Enter your new password below</p>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Set new password</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Enter your new password below</p>
         </div>
 
-        <div className="card bg-white/95 backdrop-blur">
+        <div className="card shadow-lg">
           {success ? (
             <div className="text-center space-y-4">
               <p className="text-emerald-600 font-medium">Password reset successfully. Redirecting to sign in…</p>
@@ -69,7 +68,7 @@ function ResetPasswordForm() {
             </div>
           ) : !token ? (
             <div className="text-center space-y-4">
-              <p className="text-slate-600">Invalid or missing reset link. Request a new one from the login page.</p>
+              <p className="text-muted-foreground">Invalid or missing reset link. Request a new one from the login page.</p>
               <Link href="/forgot-password" className="btn-primary inline-block">Request reset link</Link>
             </div>
           ) : (

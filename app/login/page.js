@@ -56,24 +56,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/40 to-background px-4 py-12">
-      <div className="w-full max-w-[420px] space-y-8 animate-in fade-in duration-200">
-        <div className="flex flex-col items-center text-center gap-3">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 shadow-lg ring-1 ring-primary/10">
-            <Image src="/appicon.png" alt="NETSCALE" width={52} height={52} className="object-contain" />
+    <div className="min-h-screen flex items-center justify-center bg-auth px-4 py-12 relative overflow-hidden">
+      <div className="w-full max-w-[440px] space-y-10 relative z-10 animate-fade-in-up">
+        <div className="flex flex-col items-center text-center gap-4">
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-card shadow-glass ring-1 ring-white/60 animate-[float_6s_ease-in-out_infinite]">
+            <Image src="/appicon.png" alt="NETSCALE" width={56} height={56} className="object-contain drop-shadow-sm" />
           </div>
-          <div>
-            <h1 className="page-title">NETSCALE</h1>
-            <p className="page-subtitle">ISP Management · Sign in to your account</p>
+          <div className="space-y-1">
+            <h1 className="page-title text-2xl sm:text-[1.75rem] tracking-tight">NETSCALE</h1>
+            <p className="page-subtitle text-muted-foreground">ISP Management · Sign in to your account</p>
           </div>
         </div>
 
-        <Card className="shadow-lg border-border/80 rounded-2xl overflow-hidden">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl font-semibold">Sign in</CardTitle>
-            <CardDescription>Enter your email and password to continue</CardDescription>
+        <Card className="card-glass shadow-xl overflow-hidden border-0">
+          <CardHeader className="pb-3 pt-6 px-6 sm:px-8">
+            <CardTitle className="text-xl font-semibold tracking-tight">Sign in</CardTitle>
+            <CardDescription className="text-muted-foreground">Enter your email and password to continue</CardDescription>
           </CardHeader>
-          <CardContent className="pt-2">
+          <CardContent className="pt-2 px-6 sm:px-8 pb-8">
             <form onSubmit={handleSubmit} className="space-y-5" aria-label="Sign in form">
               {error && (
                 <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive font-medium" aria-live="polite">
@@ -109,7 +109,7 @@ export default function LoginPage() {
                   className="h-11 rounded-xl border-input"
                 />
               </div>
-              <Button type="submit" disabled={loading} className="w-full h-11 rounded-xl font-semibold disabled:cursor-not-allowed" aria-busy={loading}>
+              <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl font-semibold disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-shadow" aria-busy={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
@@ -124,11 +124,11 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground">
-          <Link href="/signup" className="font-semibold text-foreground hover:underline">
+          <Link href="/signup" className="font-semibold text-foreground hover:text-primary transition-colors">
             Register your ISP
           </Link>
-          <span className="mx-1.5">·</span>
-          <Link href="/" className="hover:underline">Home</Link>
+          <span className="mx-2 text-border">·</span>
+          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
         </p>
       </div>
     </div>

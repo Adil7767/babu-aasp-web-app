@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -9,6 +10,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -20,18 +22,18 @@ import { LayoutDashboard, Building2, Users, Package, MessageSquare, User } from 
 
 const navByRole = {
   SUPER_ADMIN: [
-    { href: '/super-admin', label: 'Overview', icon: LayoutDashboard },
+    { href: '/super-admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/super-admin#tenants', label: 'Tenants', icon: Building2 },
   ],
   ADMIN: [
-    { href: '/admin', label: 'Overview', icon: LayoutDashboard },
-    { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/users', label: 'User management', icon: Users },
     { href: '/admin/packages', label: 'Packages', icon: Package },
     { href: '/admin/complaints', label: 'Complaints', icon: MessageSquare },
   ],
   STAFF: [
-    { href: '/admin', label: 'Overview', icon: LayoutDashboard },
-    { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/users', label: 'User management', icon: Users },
     { href: '/admin/packages', label: 'Packages', icon: Package },
     { href: '/admin/complaints', label: 'Complaints', icon: MessageSquare },
   ],
@@ -53,16 +55,29 @@ export default function AppSidebar({ user }) {
   }, [pathname, isMobile, setOpenMobile]);
 
   return (
-    <Sidebar collapsible="icon" side="left" className="border-r border-border bg-sidebar">
-      <SidebarContent className="pt-4">
-        <SidebarGroup>
+    <Sidebar collapsible="icon" side="left" className="border-r border-sidebar-border bg-sidebar">
+      <SidebarHeader className="shrink-0 border-b border-sidebar-border/80 px-4 py-4">
+        <Link
+          href={role === 'SUPER_ADMIN' ? '/super-admin' : role === 'ADMIN' || role === 'STAFF' ? '/admin' : '/dashboard'}
+          className="flex items-center gap-3 outline-none rounded-xl focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-sidebar-accent ring-1 ring-sidebar-border">
+            <Image src="/appicon.png" alt="" width={40} height={40} className="object-contain" />
+          </span>
+          <span className="truncate text-base font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+            NETSCALE
+          </span>
+        </Link>
+      </SidebarHeader>
+      <SidebarContent className="flex-1 min-h-0">
+        <SidebarGroup className="px-3 py-4">
           <SidebarGroupContent>
-            <SidebarMenu className="gap-0.5">
+            <SidebarMenu className="gap-1">
               {loading ? (
                 <>
                   {[1, 2, 3, 4].map((i) => (
                     <SidebarMenuItem key={i}>
-                      <Skeleton className="h-9 w-full rounded-xl" />
+                      <Skeleton className="h-11 w-full rounded-xl" />
                     </SidebarMenuItem>
                   ))}
                 </>
@@ -86,11 +101,11 @@ export default function AppSidebar({ user }) {
                       render={
                         <Link
                           href={item.href}
-                          className="flex items-center gap-3"
+                          className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px]"
                           data-active={active ? 'true' : undefined}
                         >
-                          {Icon && <Icon className="h-4 w-4 shrink-0" />}
-                          <span className="truncate group-data-[collapsible=icon]:hidden">{item.label}</span>
+                          {Icon && <Icon className="h-5 w-5 shrink-0" />}
+                          <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">{item.label}</span>
                         </Link>
                       }
                       isActive={active}
@@ -102,8 +117,8 @@ export default function AppSidebar({ user }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-border/80">
-        <SidebarMenu className="gap-0.5">
+      <SidebarFooter className="border-t border-sidebar-border/80 px-3 py-4">
+        <SidebarMenu className="gap-1">
           <SidebarMenuItem
             data-active={!loading && pathname === '/profile' ? 'true' : undefined}
             className={cn(
@@ -113,13 +128,13 @@ export default function AppSidebar({ user }) {
             )}
           >
             {loading ? (
-              <Skeleton className="h-9 w-full rounded-xl" />
+              <Skeleton className="h-11 w-full rounded-xl" />
             ) : (
               <SidebarMenuButton
                 render={
-                  <Link href="/profile" className="flex items-center gap-3">
-                    <User className="h-4 w-4 shrink-0" />
-                    <span className="truncate group-data-[collapsible=icon]:hidden">Profile</span>
+                  <Link href="/profile" className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px]">
+                    <User className="h-5 w-5 shrink-0" />
+                    <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">Profile</span>
                   </Link>
                 }
                 isActive={pathname === '/profile'}

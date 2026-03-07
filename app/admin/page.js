@@ -78,40 +78,40 @@ export default function AdminPage() {
           <>
             <h2 className="section-title text-lg mb-2">Overview · {stats.year}</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="card border-l-4 border-l-primary">
+              <div className="card-tinted border-l-4 border-l-primary shadow-md">
                 <p className="section-title">Total income</p>
                 <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{Number(stats.total_income).toFixed(2)}</p>
               </div>
-              <div className="card border-l-4 border-l-destructive">
+              <div className="card border-l-4 border-l-destructive shadow-md bg-card">
                 <p className="section-title">Total expense</p>
                 <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{Number(stats.total_expense).toFixed(2)}</p>
               </div>
-              <div className="card border-l-4 border-l-primary">
+              <div className="card-tinted border-l-4 border-l-primary shadow-md">
                 <p className="section-title">Profit</p>
                 <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{Number(stats.profit).toFixed(2)}</p>
               </div>
-              <div className="card border-l-4 border-l-muted-foreground">
+              <div className="card border-l-4 border-border shadow-md bg-muted/40">
                 <p className="section-title">Customers</p>
                 <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{stats.total_users} <span className="text-sm font-normal text-muted-foreground">({stats.active_customers ?? stats.total_users} active)</span></p>
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="card bg-muted/30">
+              <div className="card bg-muted/50 border-border shadow-md">
                 <p className="section-title">Packages</p>
                 <p className="text-lg font-semibold text-foreground mt-1">{stats.active_packages} active · {stats.expired_packages} expired</p>
               </div>
-              <div className="card bg-amber-500/5 border-amber-500/20">
+              <div className="card bg-amber-500/10 border-amber-500/30 shadow-md">
                 <p className="section-title">Complaints</p>
                 <p className="text-lg font-semibold text-foreground mt-1">{stats.complaints_pending ?? 0} pending · {stats.complaints_in_progress ?? 0} in progress · {stats.complaints_resolved ?? 0} resolved</p>
               </div>
-              <div className="card bg-primary/5 border-primary/20">
+              <div className="card bg-primary/10 border-primary/20 shadow-md">
                 <p className="section-title">Inactive customers</p>
                 <p className="text-lg font-semibold text-foreground mt-1">{stats.inactive_customers ?? 0}</p>
               </div>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <div className="card">
+              <div className="card shadow-md">
                 <h3 className="section-title mb-4">Income vs expense vs profit</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -128,7 +128,7 @@ export default function AdminPage() {
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="card">
+              <div className="card shadow-md">
                 <h3 className="section-title mb-4">Complaints by status</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">

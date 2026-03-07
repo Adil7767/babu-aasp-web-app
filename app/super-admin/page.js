@@ -129,33 +129,35 @@ export default function SuperAdminPage() {
   }, [tenants]);
 
   return (
-    <AppLayout user={user} title="Super Admin">
-      <div>
+    <AppLayout user={user} title="Super Admin" subtitle="Platform overview">
+      <div className="space-y-8">
         {stats && (
           <>
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">Platform overview</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-              <div className="card border-l-4 border-l-primary-500">
-                <p className="text-sm font-medium text-slate-500">ISP companies</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_tenants}</p>
+            <section>
+              <h2 className="section-title mb-4">Platform overview</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="card-tinted border-l-4 border-l-primary shadow-md">
+                  <p className="text-sm font-medium text-muted-foreground">ISP companies</p>
+                  <p className="text-2xl font-bold text-foreground mt-1">{stats.total_tenants}</p>
+                </div>
+                <div className="card border-l-4 border-l-emerald-500 shadow-md bg-emerald-500/5">
+                  <p className="text-sm font-medium text-muted-foreground">Total customers</p>
+                  <p className="text-2xl font-bold text-foreground mt-1">{stats.total_customers}</p>
+                </div>
+                <div className="card border-l-4 border-l-amber-500 shadow-md bg-amber-500/5">
+                  <p className="text-sm font-medium text-muted-foreground">Platform revenue</p>
+                  <p className="text-2xl font-bold text-foreground mt-1">{Number(stats.platform_revenue || 0).toFixed(2)}</p>
+                </div>
+                <div className="card border-l-4 border-border shadow-md bg-muted/40">
+                  <p className="text-sm font-medium text-muted-foreground">Tenants in list</p>
+                  <p className="text-2xl font-bold text-foreground mt-1">{tenants.length}</p>
+                </div>
               </div>
-              <div className="card border-l-4 border-l-emerald-500">
-                <p className="text-sm font-medium text-slate-500">Total customers</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{stats.total_customers}</p>
-              </div>
-              <div className="card border-l-4 border-l-amber-500">
-                <p className="text-sm font-medium text-slate-500">Platform revenue</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{Number(stats.platform_revenue || 0).toFixed(2)}</p>
-              </div>
-              <div className="card border-l-4 border-l-slate-400">
-                <p className="text-sm font-medium text-slate-500">Tenants in list</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{tenants.length}</p>
-              </div>
-            </div>
+            </section>
 
-            <div className="grid gap-6 lg:grid-cols-2 mb-8">
-              <div className="card">
-                <h3 className="text-sm font-medium text-slate-500 mb-4">Customers per tenant (top 10)</h3>
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="card shadow-md">
+                <h3 className="text-sm font-medium text-muted-foreground mb-4">Customers per tenant (top 10)</h3>
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={tenantsBarData} margin={{ top: 8, right: 8, left: 0, bottom: 24 }}>
@@ -167,8 +169,8 @@ export default function SuperAdminPage() {
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="card">
-                <h3 className="text-sm font-medium text-slate-500 mb-4">Tenants by plan</h3>
+              <div className="card shadow-md">
+                <h3 className="text-sm font-medium text-muted-foreground mb-4">Tenants by plan</h3>
                 <div className="h-72">
                   {planPieData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -193,7 +195,7 @@ export default function SuperAdminPage() {
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-slate-500 text-sm">No tenants yet</div>
+                    <div className="h-full flex items-center justify-center text-muted-foreground text-sm">No tenants yet</div>
                   )}
                 </div>
               </div>
@@ -201,39 +203,40 @@ export default function SuperAdminPage() {
           </>
         )}
 
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-slate-800">Tenants (ISPs)</h2>
-          <button
-            type="button"
-            onClick={() => setAddOpen(true)}
-            className="btn-primary py-2 px-4 text-sm"
-          >
-            Add tenant
-          </button>
-        </div>
+        <section>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <h2 className="section-title">Tenants (ISPs)</h2>
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="btn-primary py-2 px-4 text-sm"
+            >
+              Add tenant
+            </button>
+          </div>
 
-        <div className="card overflow-hidden p-0">
-          <table className="w-full text-left">
+          <div className="card overflow-hidden p-0 shadow-md">
+            <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="px-4 py-3 text-sm font-semibold text-slate-700">Name</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-700">Slug</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-700">Plan</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-700">Customers</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-700">Subscription</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-700">Actions</th>
+              <tr className="border-b border-border bg-muted/60">
+                <th className="px-4 py-3 text-sm font-semibold text-foreground">Name</th>
+                <th className="px-4 py-3 text-sm font-semibold text-foreground">Slug</th>
+                <th className="px-4 py-3 text-sm font-semibold text-foreground">Plan</th>
+                <th className="px-4 py-3 text-sm font-semibold text-foreground">Customers</th>
+                <th className="px-4 py-3 text-sm font-semibold text-foreground">Subscription</th>
+                <th className="px-4 py-3 text-sm font-semibold text-foreground">Actions</th>
               </tr>
             </thead>
             <tbody>
               {tenants.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500">No tenants yet. Add one or ask admins to sign up.</td>
+                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No tenants yet. Add one or ask admins to sign up.</td>
                 </tr>
               ) : (
                 tenants.map((t) => (
-                  <tr key={t.id} className="border-b border-slate-100 last:border-0">
-                    <td className="px-4 py-3 font-medium text-slate-800">{t.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{t.slug}</td>
+                  <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                    <td className="px-4 py-3 font-medium text-foreground">{t.name}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{t.slug}</td>
                     <td className="px-4 py-3">
                       <span className="inline-flex rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-700">
                         {t.plan}
@@ -249,10 +252,10 @@ export default function SuperAdminPage() {
                         {t.subscription_status === 'PENDING_PAYMENT' ? 'Pending payment' : t.subscription_status}
                       </span>
                       {t.subscription_ends_at && (
-                        <span className="block text-xs text-slate-500 mt-1">Expires: {new Date(t.subscription_ends_at).toLocaleDateString()}</span>
+                        <span className="block text-xs text-muted-foreground mt-1">Expires: {new Date(t.subscription_ends_at).toLocaleDateString()}</span>
                       )}
                       {t.subscription_status === 'PENDING_PAYMENT' && t.subscription_payment_reference && (
-                        <span className="block text-xs text-slate-500 mt-0.5" title="Payment ref">{t.subscription_payment_method} · {t.subscription_payment_reference}</span>
+                        <span className="block text-xs text-muted-foreground mt-0.5" title="Payment ref">{t.subscription_payment_method} · {t.subscription_payment_reference}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -287,10 +290,11 @@ export default function SuperAdminPage() {
               )}
             </tbody>
           </table>
-        </div>
+          </div>
+        </section>
 
-        <div className="mt-8 rounded-xl border border-slate-200 bg-slate-50/50 p-4 text-sm text-slate-600">
-          <p className="font-medium text-slate-700 mb-1">Plans (monthly, PKR)</p>
+        <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+          <p className="font-medium text-foreground mb-1">Plans (monthly, PKR)</p>
           <ul className="list-disc list-inside space-y-0.5">
             <li>Starter: PKR 1,000/mo · 200 customers</li>
             <li>Professional: PKR 2,000/mo · 1,000 customers</li>
@@ -298,7 +302,7 @@ export default function SuperAdminPage() {
           </ul>
         </div>
 
-      {addOpen && (
+        {addOpen && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/50 px-4" onClick={() => !addLoading && setAddOpen(false)}>
           <div className="card w-full max-w-md shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-slate-800 mb-4">Add tenant (ISP)</h3>
@@ -350,7 +354,7 @@ export default function SuperAdminPage() {
             </form>
           </div>
         </div>
-      )}
+        )}
       </div>
     </AppLayout>
   );

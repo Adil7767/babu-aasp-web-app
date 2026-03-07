@@ -103,21 +103,21 @@ export default function RenewSubscriptionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background via-40% to-destructive/10 px-4 py-12">
       <div className="max-w-md mx-auto">
-        <div className="card text-center mb-6">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 text-2xl mb-6">🔄</div>
-          <h1 className="text-xl font-bold text-slate-800">Renew your subscription</h1>
-          <p className="text-slate-600 mt-1 text-sm">
+        <div className="card text-center mb-6 shadow-md">
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary text-2xl mb-6">🔄</div>
+          <h1 className="text-xl font-bold text-foreground">Renew your subscription</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
             Your plan has expired. Pay the monthly fee to continue using the admin dashboard. Data is saved.
           </p>
-          <p className="text-primary-600 font-semibold mt-2">PKR {(PLAN_PKR[tenant?.plan] ?? 0).toLocaleString()} / month</p>
+          <p className="text-primary font-semibold mt-2">PKR {(PLAN_PKR[tenant?.plan] ?? 0).toLocaleString()} / month</p>
         </div>
 
         {!submitted && paymentInstructions && (paymentInstructions.jazzcash || paymentInstructions.easypaisa || paymentInstructions.bank) && (
-          <div className="card bg-slate-50 border border-slate-200 mb-6">
-            <h2 className="text-sm font-semibold text-slate-700 mb-2">Pay to Super Admin</h2>
-            <ul className="text-sm text-slate-600 space-y-1">
+          <div className="card bg-muted/50 border-border mb-6 shadow-md">
+            <h2 className="text-sm font-semibold text-foreground mb-2">Pay to Super Admin</h2>
+            <ul className="text-sm text-muted-foreground space-y-1">
               {paymentInstructions.jazzcash && <li><strong>JazzCash:</strong> {paymentInstructions.jazzcash}</li>}
               {paymentInstructions.easypaisa && <li><strong>EasyPaisa:</strong> {paymentInstructions.easypaisa}</li>}
               {paymentInstructions.bank && <li><strong>Bank:</strong> {paymentInstructions.bank}</li>}
@@ -126,18 +126,18 @@ export default function RenewSubscriptionPage() {
         )}
 
         {submitted ? (
-          <div className="card bg-amber-50/50 border border-amber-200">
+          <div className="card bg-amber-500/10 border-amber-500/30 shadow-md">
             <p className="text-amber-800 font-medium">Renewal payment submitted</p>
-            <p className="text-slate-600 text-sm mt-2">Super Admin will verify and extend your subscription.</p>
+            <p className="text-muted-foreground text-sm mt-2">Super Admin will verify and extend your subscription.</p>
             <div className="mt-4 flex flex-wrap gap-3 justify-center">
               <Link href="/" className="btn-secondary inline-block text-center py-2.5 px-4 text-sm">Back to home</Link>
-              <button type="button" onClick={handleLogout} disabled={loggingOut} className="btn-secondary py-2.5 px-4 text-sm border-slate-300 text-slate-600 hover:bg-slate-100">
+              <button type="button" onClick={handleLogout} disabled={loggingOut} className="btn-secondary py-2.5 px-4 text-sm">
                 {loggingOut ? '…' : 'Log out'}
               </button>
             </div>
           </div>
         ) : (
-          <div className="card">
+          <div className="card shadow-md">
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && <div className="rounded-lg bg-rose-50 border border-rose-200 px-3 py-2 text-sm text-rose-700">{error}</div>}
               <div>
@@ -168,10 +168,10 @@ export default function RenewSubscriptionPage() {
           </div>
         )}
 
-        <p className="mt-6 text-center text-sm text-slate-500">
-          <Link href="/" className="text-primary-600 font-medium hover:underline">← Back to home</Link>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          <Link href="/" className="text-primary font-medium hover:underline">← Back to home</Link>
           <span className="mx-2">·</span>
-          <button type="button" onClick={handleLogout} disabled={loggingOut} className="text-primary-600 font-medium hover:underline">
+          <button type="button" onClick={handleLogout} disabled={loggingOut} className="text-primary font-medium hover:underline">
             {loggingOut ? '…' : 'Log out'}
           </button>
         </p>

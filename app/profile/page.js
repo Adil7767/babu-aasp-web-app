@@ -166,7 +166,7 @@ export default function ProfilePage() {
     <AppLayout user={user} title="Profile" subtitle="Update your account" maxWidth="max-w-2xl">
       <div className="space-y-8">
         {/* Profile picture & info card */}
-        <Card className="rounded-2xl border-border/80 shadow-md">
+        <Card className="rounded-2xl border border-border bg-card shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-semibold">
               <User className="h-5 w-5 text-primary" />
@@ -308,7 +308,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Change password */}
-        <Card className="rounded-2xl border-border/80 shadow-md">
+        <Card className="rounded-2xl border border-border bg-card shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-semibold">
               <Lock className="h-5 w-5 text-primary" />
