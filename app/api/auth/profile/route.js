@@ -12,6 +12,7 @@ const profileSelect = {
   area_id: true,
   phone: true,
   address: true,
+  avatar_url: true,
   installation_date: true,
   router_info: true,
   is_active: true,
@@ -65,6 +66,7 @@ export async function PATCH(request) {
     if (body.full_name != null) data.full_name = String(body.full_name).trim();
     if (body.phone != null) data.phone = body.phone ? String(body.phone).trim() : null;
     if (body.address != null) data.address = body.address ? String(body.address).trim() : null;
+    if (body.avatar_url != null) data.avatar_url = body.avatar_url ? String(body.avatar_url).trim() : null;
     if (body.router_info != null) data.router_info = body.router_info ? String(body.router_info).trim() : null;
     if (body.installation_date != null) {
       data.installation_date = body.installation_date ? new Date(body.installation_date) : null;

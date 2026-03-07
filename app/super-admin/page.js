@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import AppLayout from '../components/AppLayout';
+import { SuperAdminSkeleton } from '../components/ContentSkeletons';
 
 export default function SuperAdminPage() {
   const router = useRouter();
@@ -98,12 +99,9 @@ export default function SuperAdminPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
+      <AppLayout user={user} title="Super Admin">
+        <SuperAdminSkeleton />
+      </AppLayout>
     );
   }
 

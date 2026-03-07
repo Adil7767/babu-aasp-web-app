@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppLayout from '../../components/AppLayout';
+import { ComplaintsPageSkeleton } from '../../components/ContentSkeletons';
+import { LayoutDashboard } from 'lucide-react';
 
 const statusColors = {
   PENDING: 'bg-amber-100 text-amber-800',
@@ -23,6 +26,7 @@ export default function AdminComplaintsPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
@@ -36,23 +40,29 @@ export default function AdminComplaintsPage() {
         return fetch('/api/complaints', { credentials: 'include' }).then((r) => r.json());
       })
       .then((data) => Array.isArray(data) && setList(data))
-      .catch(() => router.replace('/login'));
-  }, []);
+      .catch(() => router.replace('/login'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
-  if (!user) {
+  if (!user && !loading) return null;
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
+      <AppLayout user={user} title="Complaints" subtitle="Manage support tickets">
+        <ComplaintsPageSkeleton />
+      </AppLayout>
     );
   }
 
   return (
     <AppLayout user={user} title="Complaints" subtitle="Manage support tickets">
-      <div>
+      <div className="space-y-6">
+        <Link
+          href="/admin"
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          Overview (income, stats, charts)
+        </Link>
         {list.length === 0 ? (
           <div className="card text-center py-12 text-slate-500">
             <p className="text-lg font-medium">No complaints yet.</p>

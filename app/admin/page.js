@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import AppLayout from '../components/AppLayout';
+import { AdminOverviewSkeleton } from '../components/ContentSkeletons';
 
 export default function AdminPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
@@ -37,8 +39,9 @@ export default function AdminPage() {
         });
       })
       .then(setStats)
-      .catch(() => router.replace('/login'));
-  }, []);
+      .catch(() => router.replace('/login'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
   const financeChartData = useMemo(() => {
     if (!stats) return [];
@@ -59,14 +62,12 @@ export default function AdminPage() {
     return data.length ? data : [{ name: 'None', value: 1, fill: '#94a3b8' }];
   }, [stats]);
 
-  if (!user) {
+  if (!user && !loading) return null;
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
+      <AppLayout user={user} title="Admin">
+        <AdminOverviewSkeleton />
+      </AppLayout>
     );
   }
 

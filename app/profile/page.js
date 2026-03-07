@@ -4,11 +4,20 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import AppLayout from '../components/AppLayout';
+import { ProfilePageSkeleton } from '../components/ContentSkeletons';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { User, Lock, Camera } from 'lucide-react';
 
 export default function ProfilePage() {
   const router = useRouter();
+  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [edit, setEdit] = useState({ full_name: '', phone: '', address: '', email: '' });
+  const [edit, setEdit] = useState({ full_name: '', phone: '', address: '', email: '', avatar_url: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -16,9 +25,10 @@ export default function ProfilePage() {
   const [pwError, setPwError] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
   const [pwSaved, setPwSaved] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
-    fetch('/api/auth/profile', { credentials: 'include' })
+    fetch('/api/auth/me', { credentials: 'include' })
       .then((r) => {
         if (!r.ok) {
           router.replace('/login');
@@ -26,6 +36,16 @@ export default function ProfilePage() {
         }
         return r.json();
       })
+      .then((u) => {
+        if (u) setUser(u);
+      })
+      .catch(() => router.replace('/login'));
+  }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetch('/api/auth/profile', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data) {
           setProfile(data);
@@ -34,11 +54,11 @@ export default function ProfilePage() {
             phone: data.phone || '',
             address: data.address || '',
             email: data.email || '',
+            avatar_url: data.avatar_url || '',
           });
         }
-      })
-      .catch(() => router.replace('/login'));
-  }, []);
+      });
+  }, [user]);
 
   async function handleSaveProfile(e) {
     e.preventDefault();
@@ -55,10 +75,13 @@ export default function ProfilePage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Update failed');
+        toast.error(data.error || 'Update failed');
         return;
       }
       setProfile(data);
+      setUser((prev) => (prev ? { ...prev, ...data } : null));
       setSaved(true);
+      toast.success('Profile updated');
     } finally {
       setLoading(false);
     }
@@ -90,132 +113,203 @@ export default function ProfilePage() {
       const data = await res.json();
       if (!res.ok) {
         setPwError(data.error || 'Change failed');
+        toast.error(data.error || 'Change failed');
         return;
       }
       setPwSaved(true);
       setChangePw({ current: '', new: '', confirm: '' });
+      toast.success('Password changed');
     } finally {
       setPwLoading(false);
     }
   }
 
-  if (!profile) {
+  if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
+      <AppLayout user={null} title="Profile" subtitle="Update your account" maxWidth="max-w-2xl">
+        <ProfilePageSkeleton />
+      </AppLayout>
     );
   }
 
-  const backHref = profile.role === 'ADMIN' || profile.role === 'STAFF' ? '/admin' : '/dashboard';
+  const displayAvatar = (edit.avatar_url?.trim() || profile?.avatar_url) && !avatarError;
+  const initial = (profile?.full_name || user?.full_name || 'U').charAt(0).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-2xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden">
-              <Image src="/appicon.png" alt="NETSCALE" width={40} height={40} className="object-contain" />
-            </Link>
-            <h1 className="text-lg font-semibold text-slate-800">My profile</h1>
-          </div>
-          <Link href={backHref} className="btn-secondary py-2 px-4 text-sm">Back</Link>
-        </div>
-      </header>
+    <AppLayout user={user} title="Profile" subtitle="Update your account" maxWidth="max-w-2xl">
+      <div className="space-y-8">
+        {/* Profile picture & info card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Profile & picture
+            </CardTitle>
+            <CardDescription>Update your display name, email, and profile photo (paste an image URL).</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-6 items-start">
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative h-24 w-24 rounded-full overflow-hidden bg-muted ring-2 ring-border flex items-center justify-center">
+                  {displayAvatar ? (
+                    <Image
+                      src={edit.avatar_url?.trim() || profile?.avatar_url}
+                      alt="Avatar"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                      onError={() => setAvatarError(true)}
+                      onLoad={() => setAvatarError(false)}
+                    />
+                  ) : null}
+                  {!displayAvatar && (
+                    <span className="text-3xl font-semibold text-muted-foreground">{initial}</span>
+                  )}
+                  <span className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <Camera className="h-4 w-4" />
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground text-center">Shown in header</p>
+              </div>
+              <div className="flex-1 w-full space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="avatar_url">Profile picture URL</Label>
+                  <Input
+                    id="avatar_url"
+                    type="url"
+                    value={edit.avatar_url}
+                    onChange={(e) => setEdit((p) => ({ ...p, avatar_url: e.target.value }))}
+                    placeholder="https://…"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
 
-      <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
-        <div className="card">
-          <h2 className="text-sm font-medium text-slate-500 mb-4">Profile info</h2>
-          <form onSubmit={handleSaveProfile} className="space-y-4">
-            {error && <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">{error}</div>}
-            {saved && <p className="text-sm text-emerald-600">Profile updated.</p>}
-            <div>
-              <label className="label">Full name</label>
-              <input
-                type="text"
-                value={edit.full_name}
-                onChange={(e) => setEdit((p) => ({ ...p, full_name: e.target.value }))}
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label className="label">Email</label>
-              <input
-                type="email"
-                value={edit.email}
-                onChange={(e) => setEdit((p) => ({ ...p, email: e.target.value }))}
-                className="input-field"
-                readOnly={profile.role !== 'ADMIN'}
-              />
-              {profile.role !== 'ADMIN' && <p className="text-xs text-slate-400 mt-1">Only admins can change email.</p>}
-            </div>
-            <div>
-              <label className="label">Phone</label>
-              <input
-                type="text"
-                value={edit.phone}
-                onChange={(e) => setEdit((p) => ({ ...p, phone: e.target.value }))}
-                className="input-field"
-                placeholder="Optional"
-              />
-            </div>
-            <div>
-              <label className="label">Address</label>
-              <textarea
-                value={edit.address}
-                onChange={(e) => setEdit((p) => ({ ...p, address: e.target.value }))}
-                className="input-field min-h-[80px]"
-                placeholder="Optional"
-                rows={3}
-              />
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary">Save profile</button>
-          </form>
-        </div>
+            {error && (
+              <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {error}
+              </div>
+            )}
+            {saved && (
+              <p className="text-sm text-emerald-600 font-medium">Profile updated.</p>
+            )}
 
-        <div className="card">
-          <h2 className="text-sm font-medium text-slate-500 mb-4">Change password</h2>
-          <form onSubmit={handleChangePassword} className="space-y-4">
-            {pwError && <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">{pwError}</div>}
-            {pwSaved && <p className="text-sm text-emerald-600">Password changed.</p>}
-            <div>
-              <label className="label">Current password</label>
-              <input
-                type="password"
-                value={changePw.current}
-                onChange={(e) => setChangePw((p) => ({ ...p, current: e.target.value }))}
-                className="input-field"
-                placeholder="••••••••"
-              />
-            </div>
-            <div>
-              <label className="label">New password</label>
-              <input
-                type="password"
-                value={changePw.new}
-                onChange={(e) => setChangePw((p) => ({ ...p, new: e.target.value }))}
-                className="input-field"
-                placeholder="Min 6 characters"
-                minLength={6}
-              />
-            </div>
-            <div>
-              <label className="label">Confirm new password</label>
-              <input
-                type="password"
-                value={changePw.confirm}
-                onChange={(e) => setChangePw((p) => ({ ...p, confirm: e.target.value }))}
-                className="input-field"
-                placeholder="••••••••"
-              />
-            </div>
-            <button type="submit" disabled={pwLoading} className="btn-primary">Change password</button>
-          </form>
-        </div>
-      </main>
-    </div>
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="full_name">Full name</Label>
+                  <Input
+                    id="full_name"
+                    type="text"
+                    value={edit.full_name}
+                    onChange={(e) => setEdit((p) => ({ ...p, full_name: e.target.value }))}
+                    placeholder="Your name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={edit.email}
+                    onChange={(e) => setEdit((p) => ({ ...p, email: e.target.value }))}
+                    placeholder="you@example.com"
+                    disabled={profile?.role !== 'ADMIN'}
+                  />
+                  {profile?.role !== 'ADMIN' && (
+                    <p className="text-xs text-muted-foreground">Only admins can change email.</p>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  type="text"
+                  value={edit.phone}
+                  onChange={(e) => setEdit((p) => ({ ...p, phone: e.target.value }))}
+                  placeholder="Optional"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Address</Label>
+                <textarea
+                  id="address"
+                  value={edit.address}
+                  onChange={(e) => setEdit((p) => ({ ...p, address: e.target.value }))}
+                  placeholder="Optional"
+                  rows={3}
+                  className="flex min-h-[80px] w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+              <Button type="submit" disabled={loading}>
+                {loading ? 'Saving…' : 'Save profile'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Change password */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5" />
+              Change password
+            </CardTitle>
+            <CardDescription>Set a new password. You will stay signed in.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {pwError && (
+              <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive mb-4">
+                {pwError}
+              </div>
+            )}
+            {pwSaved && (
+              <p className="text-sm text-emerald-600 font-medium mb-4">Password changed.</p>
+            )}
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="current_pw">Current password</Label>
+                <Input
+                  id="current_pw"
+                  type="password"
+                  value={changePw.current}
+                  onChange={(e) => setChangePw((p) => ({ ...p, current: e.target.value }))}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new_pw">New password</Label>
+                <Input
+                  id="new_pw"
+                  type="password"
+                  value={changePw.new}
+                  onChange={(e) => setChangePw((p) => ({ ...p, new: e.target.value }))}
+                  placeholder="Min 6 characters"
+                  minLength={6}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm_pw">Confirm new password</Label>
+                <Input
+                  id="confirm_pw"
+                  type="password"
+                  value={changePw.confirm}
+                  onChange={(e) => setChangePw((p) => ({ ...p, confirm: e.target.value }))}
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                />
+              </div>
+              <Button type="submit" disabled={pwLoading} variant="secondary">
+                {pwLoading ? 'Updating…' : 'Change password'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </AppLayout>
   );
 }

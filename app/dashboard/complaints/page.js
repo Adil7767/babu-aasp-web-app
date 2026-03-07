@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '../../components/AppLayout';
+import { ComplaintsPageSkeleton } from '../../components/ContentSkeletons';
 
 const CATEGORIES = [
   { value: 'SLOW_INTERNET', label: 'Slow internet' },
@@ -23,6 +24,7 @@ export default function UserComplaintsPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [category, setCategory] = useState('SLOW_INTERNET');
   const [description, setDescription] = useState('');
@@ -40,8 +42,9 @@ export default function UserComplaintsPage() {
         return fetch('/api/complaints', { credentials: 'include' }).then((r) => r.json());
       })
       .then((data) => Array.isArray(data) && setList(data))
-      .catch(() => router.replace('/login'));
-  }, []);
+      .catch(() => router.replace('/login'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -64,14 +67,12 @@ export default function UserComplaintsPage() {
     }
   }
 
-  if (!user) {
+  if (!user && !loading) return null;
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
+      <AppLayout user={user} title="My complaints" subtitle="Submit and track support tickets" maxWidth="max-w-4xl">
+        <ComplaintsPageSkeleton />
+      </AppLayout>
     );
   }
 

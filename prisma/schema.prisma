@@ -135,6 +135,7 @@ model Profile {
   area_id            String?
   phone              String?
   address            String?
+  avatar_url         String?    // profile picture URL
   installation_date  DateTime?
   router_info        String?
   is_active          Boolean    @default(true)

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import AppLayout from '../components/AppLayout';
+import { DashboardSkeleton } from '../components/ContentSkeletons';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function DashboardPage() {
   const [packages, setPackages] = useState([]);
   const [payments, setPayments] = useState([]);
   const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
@@ -33,17 +35,16 @@ export default function DashboardPage() {
         if (pay) setPayments(Array.isArray(pay) ? pay : []);
         if (compList) setComplaints(Array.isArray(compList) ? compList : []);
       })
-      .catch(() => router.replace('/login'));
-  }, []);
+      .catch(() => router.replace('/login'))
+      .finally(() => setLoading(false));
+  }, [router]);
 
-  if (!user) {
+  if (!user && !loading) return null;
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
+      <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">
+        <DashboardSkeleton />
+      </AppLayout>
     );
   }
 
