@@ -1,3 +1,36 @@
+# Table `public.tenants` (or `profiles`) does not exist / column does not exist
+
+## Symptoms
+- Signup or login returns **500**
+- Error: `The table 'public.tenants' does not exist` or `The column 'profiles.staff_role' (or phone, tenant_id, is_active, etc.) does not exist`
+
+## Cause
+The database is not in sync with the Prisma schema (e.g. new clone, different `.env`, or DB was reset).
+
+## Fix
+
+1. **Sync schema and seed (recommended)**  
+   From the `web/` directory:
+   ```bash
+   yarn db:setup
+   ```
+   This runs `prisma generate`, `prisma db push`, and `prisma db seed`.
+
+2. **Or step by step**
+   ```bash
+   yarn db:generate
+   yarn db:push
+   yarn db:seed
+   ```
+
+3. **If `db push` fails** (e.g. due to existing data) but `profiles` exists and is only missing columns, run the one-off SQL:
+   ```bash
+   npx prisma db execute --file prisma/sync_profiles_table.sql --schema=./prisma/schema.prisma
+   ```
+   Then run `yarn db:seed` if you need seed data.
+
+---
+
 # Table `public.Profile` does not exist (login/signup/forgot-password 500)
 
 ## Symptoms

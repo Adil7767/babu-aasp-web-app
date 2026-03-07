@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -48,7 +49,9 @@ export default function SignupPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Registration failed');
+        const msg = data.detail || data.error || 'Registration failed';
+        setError(msg);
+        toast.error(msg);
         return;
       }
       setSuccess(true);

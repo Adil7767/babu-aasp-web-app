@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,7 +26,9 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Login failed');
+        const msg = data.detail || data.error || 'Login failed';
+        setError(msg);
+        toast.error(msg);
         return;
       }
       if (data.user.role === 'SUPER_ADMIN') {
@@ -48,23 +51,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative px-4 bg-slate-900">
-      <div className="absolute inset-0 bg-cover bg-center opacity-20" style={{ backgroundImage: 'url(/cover.png)' }} aria-hidden />
-      <div className="relative z-10 w-full max-w-md">
-        <div className="card text-center mb-8 bg-white/95 backdrop-blur">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-primary-50/30 to-slate-100 px-4">
+      <div className="w-full max-w-md">
+        <div className="card text-center mb-6">
           <div className="flex justify-center mb-6">
-            <Image src="/appicon.png" alt="NETSCALE" width={80} height={80} priority className="object-contain" />
+            <Image src="/appicon.png" alt="NETSCALE" width={72} height={72} className="object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">NETSCALE</h1>
           <p className="text-slate-500 mt-1 text-sm">ISP Management SaaS · Sign in to your account</p>
         </div>
 
-        <div className="card bg-white/95 backdrop-blur">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="card">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">
-                {error}
-              </div>
+              <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">{error}</div>
             )}
             <div>
               <label htmlFor="email" className="label">Email</label>
@@ -97,16 +97,13 @@ export default function LoginPage() {
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
-          <p className="mt-5 text-center text-sm text-slate-500">
-            Use the credentials provided by your admin.
-          </p>
-          <p className="mt-3 text-center text-sm">
-            <Link href="/signup" className="text-primary-600 font-medium hover:underline">Register your ISP (admin signup)</Link>
-          </p>
         </div>
 
-        <p className="mt-6 text-center text-sm text-slate-300">
-          <Link href="/" className="text-white font-medium hover:underline">← Back to home</Link>
+        <p className="mt-6 text-center text-sm text-slate-500">
+          <Link href="/signup" className="text-primary-600 font-medium hover:underline">Don&apos;t have an account? Register your ISP</Link>
+        </p>
+        <p className="mt-2 text-center text-sm text-slate-500">
+          <Link href="/" className="text-primary-600 font-medium hover:underline">← Back to home</Link>
         </p>
       </div>
     </div>

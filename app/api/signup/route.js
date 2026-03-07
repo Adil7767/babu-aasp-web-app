@@ -55,7 +55,13 @@ export async function POST(request) {
       tenant_id: tenant.id,
     });
   } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('Signup error:', e);
+    const message = process.env.NODE_ENV === 'production'
+      ? 'Server error'
+      : (e?.message || String(e));
+    return NextResponse.json(
+      { error: 'Server error', detail: message },
+      { status: 500 }
+    );
   }
 }

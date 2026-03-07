@@ -1,5 +1,6 @@
 import './globals.css';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Toaster } from 'react-hot-toast';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={jakarta.variable} suppressHydrationWarning>
       <body className="min-h-screen font-sans" suppressHydrationWarning>
         {children}
+        <Toaster position="top-center" toastOptions={{ duration: 5000 }} />
       </body>
     </html>
   );
