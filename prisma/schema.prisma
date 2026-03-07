@@ -1,0 +1,408 @@
+// Multi-Tenant SaaS ISP Management System
+// Super Admin | Tenant (ISP) | Admin / Staff / Customer
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+  USER
+}
+
+enum TenantPlan {
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  PENDING_PAYMENT  // signed up, awaiting payment to Super Admin
+  ACTIVE           // payment approved, tenant can use platform
+  SUSPENDED        // Super Admin suspended the tenant
+}
+
+enum PackageType {
+  DATA
+  CABLE
+}
+
+enum UserPackageStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum PaymentMethod {
+  JAZZCASH
+  EASYPAISA
+  MANUAL
+}
+
+enum PaymentVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ComplaintCategory {
+  SLOW_INTERNET
+  NO_CONNECTION
+  ROUTER_ISSUE
+  BILLING_QUERY
+  OTHER
+}
+
+enum ComplaintStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum NotificationType {
+  BILL_DUE
+  PAYMENT_CONFIRMED
+  COMPLAINT_UPDATE
+  PACKAGE_EXPIRY
+  OTHER
+}
+
+enum StaffRole {
+  OPERATOR
+  TECHNICIAN
+  BILLING_MANAGER
+}
+
+model Tenant {
+  id              String     @id @default(cuid())
+  name            String
+  slug            String     @unique
+  plan            TenantPlan @default(STARTER)
+  customer_limit  Int        // 200, 1000, or 0 = unlimited
+  is_active       Boolean    @default(true)
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+
+  subscription_status           SubscriptionStatus @default(ACTIVE)
+  subscription_payment_method   String?
+  subscription_payment_reference String?
+  subscription_receipt_url     String?            // screenshot / proof of payment
+  subscription_amount           Decimal?          @db.Decimal(10, 2)
+  subscription_requested_at     DateTime?
+  subscription_approved_at      DateTime?
+  subscription_ends_at          DateTime?         // monthly renewal; after this date dashboard restricted
+  approved_by_id                String?
+
+  approved_by   Profile?  @relation("TenantApprovedBy", fields: [approved_by_id], references: [id], onDelete: SetNull)
+  profiles       Profile[]
+  packages       Package[]
+  invoices       Invoice[]
+  payments       Payment[]
+  usage_records  UsageRecord[]
+  expense_records ExpenseRecord[]
+  complaints     Complaint[]
+  notifications  Notification[]
+  areas          Area[]
+  audit_logs     AuditLog[]
+
+  @@map("tenants")
+}
+
+model Profile {
+  id                 String     @id @default(cuid())
+  email              String     @unique
+  full_name          String
+  password_hash      String
+  role               Role       @default(USER)
+  staff_role         StaffRole? // OPERATOR, TECHNICIAN, BILLING_MANAGER when role = STAFF
+  tenant_id          String?
+  area_id            String?
+  phone              String?
+  address            String?
+  installation_date  DateTime?
+  router_info        String?
+  is_active          Boolean    @default(true)
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+
+  tenant            Tenant?    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  area              Area?     @relation(fields: [area_id], references: [id], onDelete: SetNull)
+  tenants_approved  Tenant[]   @relation("TenantApprovedBy")
+  user_packages     UserPackage[]
+  payments          Payment[]
+  usage_records     UsageRecord[]
+  expense_records   ExpenseRecord[]   @relation("ExpenseCreatedBy")
+  complaints        Complaint[]       @relation("ComplaintCreatedBy")
+  assigned_tickets  Complaint[]       @relation("ComplaintAssignedTo")
+  invoices          Invoice[]
+  notifications     Notification[]
+  password_reset_tokens PasswordResetToken[]
+  audit_logs            AuditLog[]         @relation("AuditLogUser")
+
+  @@index([tenant_id])
+  @@index([role])
+  @@index([area_id])
+  @@index([email])
+
+  @@map("profiles")
+}
+
+model PasswordResetToken {
+  id          String   @id @default(cuid())
+  profile_id  String
+  token      String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@index([profile_id])
+  @@index([token])
+  @@index([expires_at])
+
+  @@map("password_reset_tokens")
+}
+
+model Package {
+  id                   String      @id @default(cuid())
+  tenant_id            String
+  name                 String
+  type                 PackageType @default(DATA)
+  mb_limit             Int?
+  speed_mbps           Int?
+  price                Decimal     @db.Decimal(10, 2)
+  validity_period_days Int?
+  description          String?
+  is_active            Boolean     @default(true)
+  created_at           DateTime    @default(now())
+  updated_at           DateTime    @updatedAt
+
+  tenant        Tenant        @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user_packages UserPackage[]
+  invoices      Invoice[]
+
+  @@index([tenant_id])
+  @@index([is_active])
+
+  @@map("packages")
+}
+
+model UserPackage {
+  id         String            @id @default(cuid())
+  user_id    String
+  package_id String
+  status     UserPackageStatus  @default(PENDING)
+  start_date DateTime
+  end_date   DateTime
+  created_at DateTime          @default(now())
+
+  user    Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  package Package @relation(fields: [package_id], references: [id], onDelete: Restrict)
+
+  @@index([user_id])
+  @@index([package_id])
+  @@index([status])
+  @@index([user_id, status])
+
+  @@map("user_packages")
+}
+
+model Invoice {
+  id         String        @id @default(cuid())
+  tenant_id  String
+  user_id    String
+  package_id String?
+  amount     Decimal       @db.Decimal(10, 2)
+  month      Int
+  year       Int
+  due_date   DateTime
+  status     InvoiceStatus  @default(PENDING)
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+
+  tenant   Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user     Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  package  Package? @relation(fields: [package_id], references: [id], onDelete: SetNull)
+  payments Payment[]
+
+  @@unique([tenant_id, user_id, month, year])
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([status])
+  @@index([year, month])
+
+  @@map("invoices")
+}
+
+model Payment {
+  id                   String                   @id @default(cuid())
+  tenant_id            String
+  user_id              String
+  invoice_id           String?
+  amount               Decimal                  @db.Decimal(10, 2)
+  month                Int
+  year                 Int
+  payment_method       PaymentMethod            @default(MANUAL)
+  receipt_url          String?
+  verification_status  PaymentVerificationStatus @default(PENDING)
+  paid_at              DateTime                 @default(now())
+  notes                String?
+  created_at           DateTime                 @default(now())
+
+  tenant  Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user    Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  invoice Invoice? @relation(fields: [invoice_id], references: [id], onDelete: SetNull)
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([invoice_id])
+  @@index([year, month])
+  @@index([tenant_id, year])
+
+  @@map("payments")
+}
+
+model UsageRecord {
+  id         String   @id @default(cuid())
+  tenant_id  String
+  user_id    String
+  month      Int
+  year       Int
+  mb_used    Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  tenant Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user   Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([tenant_id, user_id, month, year])
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([tenant_id, year, month])
+
+  @@map("usage_records")
+}
+
+model ExpenseRecord {
+  id             String   @id @default(cuid())
+  tenant_id      String
+  amount         Decimal  @db.Decimal(10, 2)
+  month         Int
+  year          Int
+  description    String?
+  created_by_id  String
+  created_at     DateTime @default(now())
+
+  tenant     Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  created_by Profile @relation("ExpenseCreatedBy", fields: [created_by_id], references: [id], onDelete: Restrict)
+
+  @@index([tenant_id])
+  @@index([year, month])
+  @@index([created_by_id])
+
+  @@map("expense_records")
+}
+
+model Complaint {
+  id              String           @id @default(cuid())
+  tenant_id       String
+  user_id         String
+  category        ComplaintCategory
+  description     String
+  status          ComplaintStatus   @default(PENDING)
+  assigned_to_id  String?
+  closed_at       DateTime?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  tenant      Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user        Profile  @relation("ComplaintCreatedBy", fields: [user_id], references: [id], onDelete: Cascade)
+  assigned_to Profile? @relation("ComplaintAssignedTo", fields: [assigned_to_id], references: [id], onDelete: SetNull)
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([status])
+  @@index([assigned_to_id])
+  @@index([tenant_id, status])
+
+  @@map("complaints")
+}
+
+model Notification {
+  id         String           @id @default(cuid())
+  tenant_id  String
+  user_id    String
+  title      String
+  body       String?
+  type       NotificationType @default(OTHER)
+  read_at    DateTime?
+  created_at DateTime         @default(now())
+
+  tenant Tenant  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user   Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([read_at])
+
+  @@map("notifications")
+}
+
+model Area {
+  id         String   @id @default(cuid())
+  tenant_id  String
+  parent_id  String?
+  name       String
+  slug       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  tenant   Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  parent   Area?    @relation("AreaHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
+  children Area[]   @relation("AreaHierarchy")
+  profiles Profile[]
+
+  @@unique([tenant_id, slug])
+  @@index([tenant_id])
+  @@index([parent_id])
+
+  @@map("areas")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  tenant_id   String
+  user_id     String?  // profile who performed the action (null if user deleted)
+  action      String   // e.g. CUSTOMER_ADDED, PAYMENT_UPDATED
+  entity_type String   // e.g. Profile, Payment, Package
+  entity_id   String?
+  payload     Json?    // optional old/new or details
+  created_at  DateTime @default(now())
+
+  tenant Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  user   Profile? @relation("AuditLogUser", fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([entity_type])
+  @@index([created_at])
+  @@index([tenant_id, created_at])
+
+  @@map("audit_logs")
+}

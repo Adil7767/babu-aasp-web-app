@@ -1,0 +1,46 @@
+{
+  "name": "babu-isp-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Next.js app: API + web portal. Prisma and DB live here only.",
+  "scripts": {
+    "dev": "next dev",
+    "dev:clean": "rm -rf .next && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "node --test ./tests/api/auth.test.js ./tests/api/plans.test.js ./tests/api/signup.test.js ./tests/api/users-and-tenant.test.js",
+    "test:ci": "node --test tests/",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.44.0",
+    "@prisma/client": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.0",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^3.8.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "prisma": "^6.0.0",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.0.0"
+  }
+}
