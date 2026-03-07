@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import AppLayout from '../components/AppLayout';
 
 export default function SuperAdminPage() {
   const router = useRouter();
@@ -132,23 +131,8 @@ export default function SuperAdminPage() {
   }, [tenants]);
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden">
-              <Image src="/appicon.png" alt="NETSCALE" width={40} height={40} className="object-contain" />
-            </Link>
-            <div>
-              <h1 className="text-lg font-semibold text-slate-800">Super Admin</h1>
-              <p className="text-xs text-slate-500">{user.full_name}</p>
-            </div>
-          </div>
-          <Link href="/" className="btn-secondary py-2 px-4 text-sm">Home</Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-5xl px-4 py-8">
+    <AppLayout user={user} title="Super Admin">
+      <div>
         {stats && (
           <>
             <h2 className="text-xl font-semibold text-slate-800 mb-6">Platform overview</h2>
@@ -315,7 +299,6 @@ export default function SuperAdminPage() {
             <li>Enterprise: PKR 3,000/mo · Unlimited</li>
           </ul>
         </div>
-      </main>
 
       {addOpen && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/50 px-4" onClick={() => !addLoading && setAddOpen(false)}>
@@ -370,6 +353,7 @@ export default function SuperAdminPage() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </AppLayout>
   );
 }

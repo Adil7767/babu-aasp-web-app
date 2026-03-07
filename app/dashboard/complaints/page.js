@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AppLayout from '../../components/AppLayout';
 
 const CATEGORIES = [
   { value: 'SLOW_INTERNET', label: 'Slow internet' },
@@ -76,17 +76,8 @@ export default function UserComplaintsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-slate-500 hover:text-slate-700 text-sm font-medium">← Dashboard</Link>
-            <h1 className="text-lg font-semibold text-slate-800">My complaints</h1>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-4 py-8">
+    <AppLayout user={user} title="My complaints" subtitle="Submit and track support tickets" maxWidth="max-w-4xl">
+      <div>
         <button
           type="button"
           onClick={() => setShowForm(!showForm)}
@@ -148,7 +139,7 @@ export default function UserComplaintsPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

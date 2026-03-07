@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import AppLayout from '../components/AppLayout';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -65,25 +65,8 @@ export default function DashboardPage() {
   }, [payments]);
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden">
-              <Image src="/appicon.png" alt="NETSCALE" width={40} height={40} className="object-contain" />
-            </Link>
-            <div>
-              <h1 className="text-lg font-semibold text-slate-800">My dashboard</h1>
-              <p className="text-xs text-slate-500">{user.full_name}</p>
-            </div>
-          </div>
-          <Link href="/profile" className="btn-secondary py-2 px-4 text-sm">Profile</Link>
-          <Link href="/profile" className="btn-secondary py-2 px-4 text-sm">Profile</Link>
-          <Link href="/" className="btn-secondary py-2 px-4 text-sm">Home</Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-4 py-8 space-y-8">
+    <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">
+      <div className="space-y-8">
         <div className="card border-l-4 border-l-primary-500">
           <h2 className="text-sm font-medium text-slate-500">Total paid</h2>
           <p className="text-3xl font-bold text-slate-800 mt-1">{totalPaid.toFixed(2)}</p>
@@ -161,7 +144,7 @@ export default function DashboardPage() {
             </Link>
           </div>
         </section>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

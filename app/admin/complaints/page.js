@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AppLayout from '../../components/AppLayout';
 
 const statusColors = {
   PENDING: 'bg-amber-100 text-amber-800',
@@ -51,17 +51,8 @@ export default function AdminComplaintsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/admin" className="text-slate-500 hover:text-slate-700 text-sm font-medium">← Admin</Link>
-            <h1 className="text-lg font-semibold text-slate-800">Complaints</h1>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-4 py-8">
+    <AppLayout user={user} title="Complaints" subtitle="Manage support tickets">
+      <div>
         {list.length === 0 ? (
           <div className="card text-center py-12 text-slate-500">
             <p className="text-lg font-medium">No complaints yet.</p>
@@ -88,7 +79,7 @@ export default function AdminComplaintsPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
