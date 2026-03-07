@@ -49,6 +49,12 @@
     --border: oklch(0.88 0.02 220);
     --input: oklch(0.90 0.02 220);
     --ring: oklch(0.52 0.14 175);
+    --success: oklch(0.55 0.18 160);
+    --success-foreground: oklch(0.99 0 0);
+    --warning: oklch(0.75 0.18 75);
+    --warning-foreground: oklch(0.25 0.02 75);
+    --danger: oklch(0.55 0.22 25);
+    --danger-foreground: oklch(0.99 0 0);
     --chart-1: oklch(0.52 0.14 175);
     --chart-2: oklch(0.62 0.19 260);
     --chart-3: oklch(0.55 0.22 25);
@@ -338,5 +344,25 @@
     font-weight: 600;
     letter-spacing: 0.02em;
     border-radius: 9999px;
+  }
+  .badge-default {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  .badge-primary {
+    background-color: color-mix(in oklch, var(--primary) 18%, transparent);
+    color: var(--primary);
+  }
+  .badge-success {
+    background-color: color-mix(in oklch, var(--success) 18%, transparent);
+    color: var(--success);
+  }
+  .badge-warning {
+    background-color: color-mix(in oklch, var(--warning) 22%, transparent);
+    color: var(--warning-foreground);
+  }
+  .badge-danger {
+    background-color: color-mix(in oklch, var(--destructive) 18%, transparent);
+    color: var(--destructive);
   }
 }

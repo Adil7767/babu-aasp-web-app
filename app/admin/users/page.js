@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import AppLayout from '../../components/AppLayout';
+import { DataTable } from '../../components/DataTable';
 import { TableSkeleton } from '../../components/ContentSkeletons';
 import {
   Breadcrumb,
@@ -14,25 +15,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LayoutDashboard } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { LayoutDashboard, Pencil, Eye, UserX } from 'lucide-react';
 
 export default function AdminUsersPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [roleFilter, setRoleFilter] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const [addForm, setAddForm] = useState({ full_name: '', email: '', password: '', role: 'USER' });
@@ -54,13 +47,12 @@ export default function AdminUsersPage() {
           return;
         }
         setUser(u);
-        const q = roleFilter ? `?role=${roleFilter}` : '';
-        return fetch(`/api/users${q}`, { credentials: 'include' }).then((r) => r.json());
+        return fetch('/api/users', { credentials: 'include' }).then((r) => r.json());
       })
       .then((data) => Array.isArray(data) && setList(data))
       .catch(() => router.replace('/login'))
       .finally(() => setLoading(false));
-  }, [router, roleFilter]);
+  }, [router]);
 
   async function handleAddUser(e) {
     e.preventDefault();
@@ -98,7 +90,7 @@ export default function AdminUsersPage() {
   if (!user && !loading) return null;
   if (loading) {
     return (
-      <AppLayout user={user} title="Users" subtitle="Manage customers and staff">
+      <AppLayout user={user} title="Customers" subtitle="Manage customers and staff">
         <TableSkeleton rows={8} cols={5} />
       </AppLayout>
     );
@@ -106,8 +98,37 @@ export default function AdminUsersPage() {
 
   const isAdmin = user?.role === 'ADMIN';
 
+  const columns = [
+    { id: 'full_name', label: 'Name', sortable: true, render: (val, row) => <span className="font-medium text-foreground">{val || '—'}</span> },
+    { id: 'email', label: 'Email', sortable: true, className: 'text-muted-foreground' },
+    {
+      id: 'role',
+      label: 'Role',
+      sortable: true,
+      render: (val) => (
+        <Badge variant={val === 'ADMIN' ? 'primary' : val === 'STAFF' ? 'warning' : 'default'}>
+          {val}
+        </Badge>
+      ),
+    },
+    {
+      id: 'is_active',
+      label: 'Status',
+      sortable: true,
+      render: (val) => (
+        <Badge variant={val ? 'success' : 'default'}>{val ? 'Active' : 'Inactive'}</Badge>
+      ),
+    },
+    {
+      id: 'created_at',
+      label: 'Created',
+      sortable: true,
+      render: (val) => <span className="text-muted-foreground">{val ? new Date(val).toLocaleDateString() : '—'}</span>,
+    },
+  ];
+
   return (
-    <AppLayout user={user} title="Users" subtitle="Manage customers and staff">
+    <AppLayout user={user} title="Customers" subtitle="Manage customers and staff">
       <div className="space-y-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -118,7 +139,7 @@ export default function AdminUsersPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Users</BreadcrumbPage>
+              <BreadcrumbPage>Customers</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -131,27 +152,16 @@ export default function AdminUsersPage() {
             <LayoutDashboard className="h-4 w-4" />
             Overview
           </Link>
-          <div className="flex items-center gap-2">
-            <select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="flex h-10 rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <option value="">All (customers & staff)</option>
-              <option value="USER">Customers only</option>
-              <option value="STAFF">Staff only</option>
-            </select>
-            {isAdmin && (
-              <Button onClick={() => setShowAdd((v) => !v)} variant={showAdd ? 'secondary' : 'default'}>
-                {showAdd ? 'Cancel' : 'Add user'}
-              </Button>
-            )}
-          </div>
+          {isAdmin && (
+            <Button onClick={() => setShowAdd((v) => !v)} variant={showAdd ? 'secondary' : 'default'}>
+              {showAdd ? 'Cancel' : 'Add user'}
+            </Button>
+          )}
         </div>
 
         {showAdd && isAdmin && (
           <div className="card p-6">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Add user</h3>
+            <h3 className="section-title mb-4">Add user</h3>
             <form onSubmit={handleAddUser} className="grid gap-4 sm:grid-cols-2 max-w-2xl">
               <div className="space-y-2">
                 <Label htmlFor="add_name">Full name</Label>
@@ -160,6 +170,7 @@ export default function AdminUsersPage() {
                   value={addForm.full_name}
                   onChange={(e) => setAddForm((p) => ({ ...p, full_name: e.target.value }))}
                   placeholder="John Doe"
+                  className="input-field"
                   required
                 />
               </div>
@@ -171,6 +182,7 @@ export default function AdminUsersPage() {
                   value={addForm.email}
                   onChange={(e) => setAddForm((p) => ({ ...p, email: e.target.value }))}
                   placeholder="john@example.com"
+                  className="input-field"
                   required
                 />
               </div>
@@ -182,6 +194,7 @@ export default function AdminUsersPage() {
                   value={addForm.password}
                   onChange={(e) => setAddForm((p) => ({ ...p, password: e.target.value }))}
                   placeholder="Min 6 characters"
+                  className="input-field"
                   minLength={6}
                   required
                 />
@@ -192,7 +205,7 @@ export default function AdminUsersPage() {
                   id="add_role"
                   value={addForm.role}
                   onChange={(e) => setAddForm((p) => ({ ...p, role: e.target.value }))}
-                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                  className="input-field h-10"
                 >
                   <option value="USER">Customer</option>
                   <option value="STAFF">Staff</option>
@@ -207,59 +220,40 @@ export default function AdminUsersPage() {
           </div>
         )}
 
-        {list.length === 0 ? (
-          <div className="card text-center py-12 text-muted-foreground">
-            <p className="text-lg font-medium">No users yet.</p>
-            <p className="text-sm mt-1">Add customers or staff above.</p>
-          </div>
-        ) : (
-          <div className="rounded-xl border border-border overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {list.map((u) => (
-                  <TableRow key={u.id}>
-                    <TableCell className="font-medium">{u.full_name || '—'}</TableCell>
-                    <TableCell className="text-muted-foreground">{u.email}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ${
-                          u.role === 'ADMIN'
-                            ? 'bg-primary/15 text-primary'
-                            : u.role === 'STAFF'
-                              ? 'bg-amber-100 text-amber-800'
-                              : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
-                        {u.role}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ${
-                          u.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'
-                        }`}
-                      >
-                        {u.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        <DataTable
+          columns={columns}
+          data={list}
+          searchPlaceholder="Search by name or email..."
+          searchKeys={['full_name', 'email']}
+          initialSort={{ key: 'full_name', dir: 'asc' }}
+          stickyHeader
+          emptyMessage="No users yet. Add customers or staff above."
+          pagination
+          defaultPageSize={10}
+          renderActions={(row) => (
+            <div className="flex items-center justify-end gap-1">
+              <Link href={`/admin/users?view=${row.id}`}>
+                <Button variant="ghost" size="icon" className="h-8 w-8" title="View">
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </Link>
+              {isAdmin && (
+                <>
+                  <Link href={`/admin/users?edit=${row.id}`}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href={`/admin/users?suspend=${row.id}`}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" title="Suspend">
+                      <UserX className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
+        />
       </div>
     </AppLayout>
   );
