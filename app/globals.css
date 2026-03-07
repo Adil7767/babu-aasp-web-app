@@ -225,15 +225,20 @@
     box-shadow: var(--shadow-md);
     transition: box-shadow 0.2s ease, border-color 0.2s ease;
   }
-  .card:hover {
-    box-shadow: var(--shadow-lg);
-  }
   .card-tinted {
     border-radius: 1.25rem;
     border: 1px solid color-mix(in oklch, var(--primary) 25%, var(--border));
     background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 6%, var(--card)), var(--card));
     padding: 1.5rem;
     box-shadow: var(--shadow-md);
+    transition: box-shadow 0.2s ease;
+  }
+  .card-tinted:hover {
+    box-shadow: var(--shadow-lg);
+  }
+  .stat-value {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
   }
 
   .input-field {
@@ -242,14 +247,18 @@
     border: 1px solid var(--input);
     background-color: var(--background);
     padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
     color: var(--foreground);
-    transition: border-color, box-shadow 0.15s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   .input-field::placeholder { color: var(--muted-foreground); }
   .input-field:focus {
     border-color: var(--ring);
     outline: none;
-    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 20%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 25%, transparent);
+  }
+  .input-field:hover:not(:focus) {
+    border-color: var(--border);
   }
 
   .label {
@@ -306,18 +315,28 @@
   .link-card {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     width: 100%;
     padding: 1.25rem 1.5rem;
     border-radius: 1.25rem;
     border: 1px solid var(--border);
     background-color: var(--card);
     box-shadow: var(--shadow-md);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
   }
   .link-card:hover {
     border-color: color-mix(in oklch, var(--primary) 50%, var(--border));
     background-color: color-mix(in oklch, var(--accent) 60%, var(--card));
     box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 9999px;
   }
 }

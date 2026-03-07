@@ -70,7 +70,7 @@ export default function DashboardPage() {
       <div className="space-y-8">
         <div className="card-tinted border-l-4 border-l-primary shadow-md">
           <h2 className="section-title text-muted-foreground">Total paid</h2>
-          <p className="text-3xl font-bold text-foreground mt-1 tracking-tight tabular-nums">{totalPaid.toFixed(2)}</p>
+          <p className="stat-value text-3xl font-bold text-foreground mt-1">{totalPaid.toFixed(2)}</p>
         </div>
 
         {paymentsByMonth.length > 0 && (

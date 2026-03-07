@@ -80,7 +80,7 @@ export default function SignupPage() {
                 Sign in and submit your subscription payment (JazzCash, EasyPaisa, or bank transfer) for Super Admin approval.
               </p>
             </div>
-            <Link href="/login" className={cn(buttonVariants(), 'w-full h-11 rounded-xl font-semibold inline-flex items-center justify-center')}>
+            <Link href="/login" className={cn(buttonVariants(), 'w-full h-12 rounded-xl font-semibold inline-flex items-center justify-center shadow-md hover:shadow-lg transition-shadow')}>
               Sign in
             </Link>
           </CardContent>
@@ -181,7 +181,7 @@ export default function SignupPage() {
                 </select>
                 <p className="text-xs text-muted-foreground">Pay via JazzCash / EasyPaisa after signup.</p>
               </div>
-              <Button type="submit" disabled={loading} className="w-full h-11 rounded-xl font-semibold" aria-busy={loading}>
+              <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl font-semibold shadow-md hover:shadow-lg transition-shadow" aria-busy={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
@@ -195,9 +195,11 @@ export default function SignupPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground">
-          <Link href="/login" className="font-semibold text-foreground hover:underline">Already have an account? Sign in</Link>
-        </p>
+        <div className="pt-2 border-t border-border/60">
+          <p className="text-center text-sm text-muted-foreground">
+            <Link href="/login" className="font-semibold text-foreground hover:text-primary transition-colors">Already have an account? Sign in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

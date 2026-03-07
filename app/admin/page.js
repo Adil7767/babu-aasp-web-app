@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { ChevronRight } from 'lucide-react';
 import AppLayout from '../components/AppLayout';
 import { AdminOverviewSkeleton } from '../components/ContentSkeletons';
 
@@ -79,20 +80,20 @@ export default function AdminPage() {
             <h2 className="section-title text-lg mb-2">Overview · {stats.year}</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="card-tinted border-l-4 border-l-primary shadow-md">
-                <p className="section-title">Total income</p>
-                <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{Number(stats.total_income).toFixed(2)}</p>
+                <p className="section-title text-muted-foreground">Total income</p>
+                <p className="stat-value text-2xl font-bold text-foreground mt-1">{Number(stats.total_income).toFixed(2)}</p>
               </div>
               <div className="card border-l-4 border-l-destructive shadow-md bg-card">
-                <p className="section-title">Total expense</p>
-                <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{Number(stats.total_expense).toFixed(2)}</p>
+                <p className="section-title text-muted-foreground">Total expense</p>
+                <p className="stat-value text-2xl font-bold text-foreground mt-1">{Number(stats.total_expense).toFixed(2)}</p>
               </div>
               <div className="card-tinted border-l-4 border-l-primary shadow-md">
-                <p className="section-title">Profit</p>
-                <p className="text-2xl font-bold text-primary mt-1 tracking-tight">{Number(stats.profit).toFixed(2)}</p>
+                <p className="section-title text-muted-foreground">Profit</p>
+                <p className="stat-value text-2xl font-bold text-primary mt-1">{Number(stats.profit).toFixed(2)}</p>
               </div>
               <div className="card border-l-4 border-border shadow-md bg-muted/40">
-                <p className="section-title">Customers</p>
-                <p className="text-2xl font-bold text-foreground mt-1 tracking-tight">{stats.total_users} <span className="text-sm font-normal text-muted-foreground">({stats.active_customers ?? stats.total_users} active)</span></p>
+                <p className="section-title text-muted-foreground">Customers</p>
+                <p className="stat-value text-2xl font-bold text-foreground mt-1">{stats.total_users} <span className="text-sm font-normal text-muted-foreground">({stats.active_customers ?? stats.total_users} active)</span></p>
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
@@ -160,17 +161,19 @@ export default function AdminPage() {
         <div className="flex flex-wrap gap-4">
           <Link href="/admin/complaints" className="link-card w-full sm:w-auto sm:min-w-[280px] group">
             <span className="text-2xl" aria-hidden>🎫</span>
-            <div>
-              <p className="font-semibold text-foreground group-hover:text-primary">Complaints</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Complaints</p>
               <p className="text-sm text-muted-foreground">Manage support tickets</p>
             </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
           </Link>
           <Link href="/" className="link-card w-full sm:w-auto sm:min-w-[280px] group">
             <span className="text-2xl" aria-hidden>🏠</span>
-            <div>
-              <p className="font-semibold text-foreground group-hover:text-primary">Home</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Home</p>
               <p className="text-sm text-muted-foreground">Back to portal</p>
             </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
           </Link>
         </div>
       </div>

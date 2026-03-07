@@ -25,6 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { LayoutDashboard } from 'lucide-react';
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -125,8 +126,9 @@ export default function AdminUsersPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/admin"
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-all hover:bg-accent hover:text-accent-foreground hover:shadow-md"
           >
+            <LayoutDashboard className="h-4 w-4" />
             Overview
           </Link>
           <div className="flex items-center gap-2">

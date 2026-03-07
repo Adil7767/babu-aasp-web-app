@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
             <CardTitle className="text-xl font-semibold tracking-tight">Reset password</CardTitle>
             <CardDescription>We’ll send a link to your email</CardDescription>
           </CardHeader>
-          <CardContent className="pt-2">
+          <CardContent className="pt-2 px-6 sm:px-8 pb-8">
             {sent ? (
               <div className="space-y-5">
                 <p className="text-sm text-muted-foreground">
@@ -96,7 +96,7 @@ export default function ForgotPasswordPage() {
                     className="h-11 rounded-xl border-input"
                   />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-11 rounded-xl font-semibold" aria-busy={loading}>
+                <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl font-semibold shadow-md hover:shadow-lg transition-shadow" aria-busy={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
@@ -111,9 +111,11 @@ export default function ForgotPasswordPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground">
-          <Link href="/login" className="font-semibold text-foreground hover:underline">Back to sign in</Link>
-        </p>
+        <div className="pt-2 border-t border-border/60">
+          <p className="text-center text-sm text-muted-foreground">
+            <Link href="/login" className="font-semibold text-foreground hover:text-primary transition-colors">Back to sign in</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

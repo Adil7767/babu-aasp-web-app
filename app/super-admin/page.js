@@ -137,20 +137,20 @@ export default function SuperAdminPage() {
               <h2 className="section-title mb-4">Platform overview</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="card-tinted border-l-4 border-l-primary shadow-md">
-                  <p className="text-sm font-medium text-muted-foreground">ISP companies</p>
-                  <p className="text-2xl font-bold text-foreground mt-1">{stats.total_tenants}</p>
+                  <p className="section-title text-muted-foreground">ISP companies</p>
+                  <p className="stat-value text-2xl font-bold text-foreground mt-1">{stats.total_tenants}</p>
                 </div>
                 <div className="card border-l-4 border-l-emerald-500 shadow-md bg-emerald-500/5">
-                  <p className="text-sm font-medium text-muted-foreground">Total customers</p>
-                  <p className="text-2xl font-bold text-foreground mt-1">{stats.total_customers}</p>
+                  <p className="section-title text-muted-foreground">Total customers</p>
+                  <p className="stat-value text-2xl font-bold text-foreground mt-1">{stats.total_customers}</p>
                 </div>
                 <div className="card border-l-4 border-l-amber-500 shadow-md bg-amber-500/5">
-                  <p className="text-sm font-medium text-muted-foreground">Platform revenue</p>
-                  <p className="text-2xl font-bold text-foreground mt-1">{Number(stats.platform_revenue || 0).toFixed(2)}</p>
+                  <p className="section-title text-muted-foreground">Platform revenue</p>
+                  <p className="stat-value text-2xl font-bold text-foreground mt-1">{Number(stats.platform_revenue || 0).toFixed(2)}</p>
                 </div>
                 <div className="card border-l-4 border-border shadow-md bg-muted/40">
-                  <p className="text-sm font-medium text-muted-foreground">Tenants in list</p>
-                  <p className="text-2xl font-bold text-foreground mt-1">{tenants.length}</p>
+                  <p className="section-title text-muted-foreground">Tenants in list</p>
+                  <p className="stat-value text-2xl font-bold text-foreground mt-1">{tenants.length}</p>
                 </div>
               </div>
             </section>

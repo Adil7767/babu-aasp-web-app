@@ -76,7 +76,7 @@ export default function LoginPage() {
           <CardContent className="pt-2 px-6 sm:px-8 pb-8">
             <form onSubmit={handleSubmit} className="space-y-5" aria-label="Sign in form">
               {error && (
-                <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive font-medium" aria-live="polite">
+                <div role="alert" className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive font-medium" aria-live="polite">
                   {error}
                 </div>
               )}
@@ -89,7 +89,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="you@example.com"
-                  className="h-11 rounded-xl border-input"
+                  className="h-11 rounded-xl border-input transition-shadow"
                 />
               </div>
               <div className="space-y-2">
@@ -106,7 +106,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="h-11 rounded-xl border-input"
+                  className="h-11 rounded-xl border-input transition-shadow"
                 />
               </div>
               <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl font-semibold disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-shadow" aria-busy={loading}>
@@ -123,13 +123,15 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground">
-          <Link href="/signup" className="font-semibold text-foreground hover:text-primary transition-colors">
-            Register your ISP
-          </Link>
-          <span className="mx-2 text-border">·</span>
-          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-        </p>
+        <div className="pt-2 border-t border-border/60">
+          <p className="text-center text-sm text-muted-foreground">
+            <Link href="/signup" className="font-semibold text-foreground hover:text-primary transition-colors">
+              Register your ISP
+            </Link>
+            <span className="mx-2 text-border">·</span>
+            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
