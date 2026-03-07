@@ -28,6 +28,8 @@ export async function POST(request) {
       sub: user.id,
       email: user.email,
       role: user.role,
+      subscription_status: user.tenant?.subscription_status ?? null,
+      subscription_ends_at: user.tenant?.subscription_ends_at?.toISOString?.() ?? user.tenant?.subscription_ends_at ?? null,
     });
     const res = NextResponse.json({
       token,

@@ -1,8 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function SuspendedPage() {
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = '/login';
+    } finally {
+      setLoggingOut(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 px-4">
       <div className="card max-w-md w-full text-center">
@@ -12,7 +25,9 @@ export default function SuspendedPage() {
           Your ISP account has been suspended by the platform. Please contact Super Admin for support.
         </p>
         <Link href="/" className="btn-secondary mt-6 inline-block py-2.5 px-4 text-sm">Back to home</Link>
-        <Link href="/login" className="block mt-3 text-sm text-primary-600 font-medium hover:underline">Sign in with another account</Link>
+        <button type="button" onClick={handleLogout} disabled={loggingOut} className="block mt-3 text-sm text-primary-600 font-medium hover:underline">
+          {loggingOut ? '…' : 'Log out / Sign in with another account'}
+        </button>
       </div>
     </div>
   );

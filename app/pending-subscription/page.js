@@ -18,6 +18,17 @@ export default function PendingSubscriptionPage() {
   const [receiptUrl, setReceiptUrl] = useState('');
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = '/login';
+    } finally {
+      setLoggingOut(false);
+    }
+  }
 
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
@@ -115,7 +126,12 @@ export default function PendingSubscriptionPage() {
             {tenant?.subscription_payment_reference && (
               <p className="text-slate-500 text-xs mt-3">Reference: {tenant.subscription_payment_reference}</p>
             )}
-            <Link href="/" className="btn-secondary mt-4 inline-block text-center py-2.5 px-4 text-sm">Back to home</Link>
+            <div className="mt-4 flex flex-wrap gap-3 justify-center">
+              <Link href="/" className="btn-secondary inline-block text-center py-2.5 px-4 text-sm">Back to home</Link>
+              <button type="button" onClick={handleLogout} disabled={loggingOut} className="btn-secondary py-2.5 px-4 text-sm border-slate-300 text-slate-600 hover:bg-slate-100">
+                {loggingOut ? '…' : 'Log out'}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="card">
@@ -152,6 +168,10 @@ export default function PendingSubscriptionPage() {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           <Link href="/" className="text-primary-600 font-medium hover:underline">← Back to home</Link>
+          <span className="mx-2">·</span>
+          <button type="button" onClick={handleLogout} disabled={loggingOut} className="text-primary-600 font-medium hover:underline">
+            {loggingOut ? '…' : 'Log out'}
+          </button>
         </p>
       </div>
     </div>
