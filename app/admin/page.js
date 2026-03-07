@@ -40,17 +40,6 @@ export default function AdminPage() {
       .catch(() => router.replace('/login'));
   }, []);
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
-          <p className="text-sm text-slate-500">Loading…</p>
-        </div>
-      </div>
-    );
-  }
-
   const financeChartData = useMemo(() => {
     if (!stats) return [];
     const profit = Number(stats.profit);
@@ -69,6 +58,17 @@ export default function AdminPage() {
     if ((stats.complaints_resolved ?? 0) > 0) data.push({ name: 'Resolved', value: stats.complaints_resolved, fill: '#10b981' });
     return data.length ? data : [{ name: 'None', value: 1, fill: '#94a3b8' }];
   }, [stats]);
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
+          <p className="text-sm text-slate-500">Loading…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-surface">
