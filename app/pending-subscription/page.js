@@ -88,15 +88,15 @@ export default function PendingSubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-surface">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background via-40% to-amber-500/20 px-4 py-12">
-      <div className="max-w-md mx-auto">
+    <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 via-background via-40% to-amber-500/20 px-4 py-12 overflow-auto">
+      <div className="w-full max-w-md flex-shrink-0 mx-auto">
         <div className="card text-center mb-6 shadow-md">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-700 text-2xl mb-6">⏳</div>
           <h1 className="text-xl font-bold text-foreground">Complete your subscription</h1>

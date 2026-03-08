@@ -68,8 +68,8 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-auth px-4 py-12 relative overflow-hidden">
-        <Card className="w-full max-w-[440px] card-glass shadow-xl overflow-hidden border-0 relative z-10">
+      <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-auth px-4 py-12 overflow-auto">
+        <Card className="w-full max-w-[440px] flex-shrink-0 mx-auto card-glass shadow-xl overflow-hidden border-0 relative z-10">
           <CardContent className="pt-10 pb-10 px-8 text-center space-y-6">
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15 text-primary text-2xl font-bold shadow-md">
               ✓
@@ -90,8 +90,8 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-auth px-4 py-12 relative overflow-hidden">
-      <div className="w-full max-w-[440px] space-y-10 relative z-10 animate-fade-in-up">
+    <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-auth px-4 py-12 overflow-auto">
+      <div className="w-full max-w-[440px] flex-shrink-0 mx-auto space-y-10 relative z-10 animate-fade-in-up">
         <div className="flex flex-col items-center text-center gap-4">
           <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-card shadow-glass ring-1 ring-white/60">
             <Image src="/appicon.png" alt="NETSCALE" width={52} height={52} className="object-contain" />

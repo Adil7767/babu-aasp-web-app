@@ -17,8 +17,8 @@ export default function SuspendedPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-destructive/5 to-background px-4">
-      <div className="card max-w-md w-full text-center shadow-md">
+    <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-destructive/5 to-background px-4 overflow-auto">
+      <div className="card max-w-md w-full flex-shrink-0 mx-auto text-center shadow-md">
         <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/15 text-destructive text-2xl mb-6">⛔</div>
         <h1 className="text-xl font-bold text-foreground">Account suspended</h1>
         <p className="text-muted-foreground mt-2 text-sm">

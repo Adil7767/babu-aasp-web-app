@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { setAuthUser } from '@/store/authStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,6 +37,7 @@ export default function LoginPage() {
         toast.error(msg);
         return;
       }
+      setAuthUser(data.user);
       if (data.user.role === 'SUPER_ADMIN') {
         router.push('/super-admin');
       } else if (data.user.tenant?.subscription_status === 'SUSPENDED') {
@@ -56,8 +58,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-auth px-4 py-12 relative overflow-hidden">
-      <div className="w-full max-w-[440px] space-y-10 relative z-10 animate-fade-in-up">
+    <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-auth px-4 py-12 overflow-auto">
+      <div className="w-full max-w-[440px] flex-shrink-0 mx-auto space-y-10 relative z-10 animate-fade-in-up">
         <div className="flex flex-col items-center text-center gap-4">
           <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-card shadow-glass ring-1 ring-white/60 animate-[float_6s_ease-in-out_infinite]">
             <Image src="/appicon.png" alt="NETSCALE" width={56} height={56} className="object-contain drop-shadow-sm" />

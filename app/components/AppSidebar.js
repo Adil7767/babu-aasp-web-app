@@ -36,11 +36,11 @@ const ADMIN_NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/users', label: 'Customers', icon: Users },
   { href: '/admin/packages', label: 'Packages', icon: Package },
-  { href: '/admin', label: 'Billing', icon: CreditCard, exact: true },
-  { href: '/admin', label: 'Payments', icon: Wallet, exact: true },
+  { href: '/admin/billing', label: 'Billing', icon: CreditCard },
+  { href: '/admin/payments', label: 'Payments', icon: Wallet },
   { href: '/admin/complaints', label: 'Complaints', icon: MessageSquare },
   { href: '/admin/users?role=STAFF', label: 'Staff', icon: UserCog },
-  { href: '/admin', label: 'Reports', icon: BarChart3, exact: true },
+  { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
 ];
 
 const SUPER_ADMIN_NAV = [

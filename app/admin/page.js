@@ -57,8 +57,20 @@ export default function AdminPage() {
     return data.length ? data : [{ name: 'None', value: 1, fill: '#94a3b8' }];
   }, [stats]);
 
-  if (!user && !userLoading) return null;
-  if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') return null;
+  if (!user && !userLoading) {
+    return (
+      <AppLayout user={undefined} title="Admin">
+        <AdminOverviewSkeleton />
+      </AppLayout>
+    );
+  }
+  if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') {
+    return (
+      <AppLayout user={user ?? undefined} title="Admin">
+        <AdminOverviewSkeleton />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout user={user ?? undefined} title="Admin">

@@ -39,17 +39,6 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, [router]);
 
-  if (!user && !loading) return null;
-  if (loading) {
-    return (
-      <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">
-        <DashboardSkeleton />
-      </AppLayout>
-    );
-  }
-
-  const totalPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
-
   const paymentsByMonth = useMemo(() => {
     const byKey = {};
     payments.forEach((p) => {
@@ -64,6 +53,17 @@ export default function DashboardPage() {
       return ya !== yb ? ya - yb : ma - mb;
     }).slice(-12);
   }, [payments]);
+
+  if (!user && !loading) return null;
+  if (loading) {
+    return (
+      <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">
+        <DashboardSkeleton />
+      </AppLayout>
+    );
+  }
+
+  const totalPaid = payments.reduce((s, p) => s + Number(p.amount), 0);
 
   return (
     <AppLayout user={user} title="My dashboard" maxWidth="max-w-4xl">

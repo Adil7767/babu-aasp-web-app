@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,9 +15,23 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { clearAuthUser } from '@/store/authStore';
 import { User, Home, LogOut, ChevronDown, Search, Bell } from 'lucide-react';
 
 export default function AppHeader({ user, title, subtitle, className }) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    const confirmed = typeof window !== 'undefined' && window.confirm('Are you sure you want to log out?');
+    if (!confirmed) return;
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    } finally {
+      clearAuthUser();
+      router.push('/login');
+      router.refresh();
+    }
+  }
   const isSuperAdmin = user?.role === 'SUPER_ADMIN';
   const isAdminOrStaff = user?.role === 'ADMIN' || user?.role === 'STAFF';
   const homeHref = isSuperAdmin ? '/super-admin' : isAdminOrStaff ? '/admin' : '/dashboard';
@@ -87,30 +101,31 @@ export default function AppHeader({ user, title, subtitle, className }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">Account</DropdownMenuLabel>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Link href="/profile" className="flex w-full items-center gap-2 outline-none [.group:hover_&]:no-underline">
-                      <User className="h-4 w-4 shrink-0" />
-                      Profile & picture
-                    </Link>
+                  <DropdownMenuItem
+                    className="cursor-pointer flex items-center gap-2"
+                    onClick={() => router.push('/profile')}
+                  >
+                    <User className="h-4 w-4 shrink-0" />
+                    Profile & picture
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Link href={homeHref} className="flex w-full items-center gap-2 outline-none [.group:hover_&]:no-underline">
-                      <Home className="h-4 w-4 shrink-0" />
-                      Home
-                    </Link>
+                  <DropdownMenuItem
+                    className="cursor-pointer flex items-center gap-2"
+                    onClick={() => router.push(homeHref)}
+                  >
+                    <Home className="h-4 w-4 shrink-0" />
+                    Home
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   variant="destructive"
                   className="cursor-pointer font-medium"
-                  onClick={() => document.getElementById('header-logout-form')?.requestSubmit()}
+                  onClick={handleLogout}
                 >
                   <LogOut className="h-4 w-4 shrink-0" />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
-              <form id="header-logout-form" action="/api/auth/logout" method="POST" className="hidden" />
             </DropdownMenu>
           )}
         </div>

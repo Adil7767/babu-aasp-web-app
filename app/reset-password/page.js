@@ -50,8 +50,8 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative px-4 bg-gradient-to-br from-primary/15 via-background to-accent/30">
-      <div className="relative z-10 w-full max-w-md">
+    <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-br from-primary/15 via-background to-accent/30 overflow-auto">
+      <div className="relative z-10 w-full max-w-md flex-shrink-0 mx-auto">
         <div className="card text-center mb-8 shadow-lg">
           <div className="flex justify-center mb-6">
             <Image src="/appicon.png" alt="NETSCALE" width={80} height={80} priority className="object-contain" />
@@ -121,7 +121,7 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+      <div className="fixed inset-0 w-full min-h-screen flex flex-col items-center justify-center bg-slate-900">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/30 border-t-white" />
       </div>
     }>
