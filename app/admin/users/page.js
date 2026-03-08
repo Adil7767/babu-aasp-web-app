@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
 import AppLayout from '../../components/AppLayout';
 import { DataTable } from '../../components/DataTable';
 import { TableSkeleton } from '../../components/ContentSkeletons';
@@ -20,39 +21,38 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { LayoutDashboard, Pencil, Eye, UserX } from 'lucide-react';
+import { useAuthMe } from '../../hooks/useAuthMe';
+import { useUsers } from '../../hooks/useUsers';
 
 export default function AdminUsersPage() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: user, isLoading: userLoading, isError: userError } = useAuthMe();
+  const { data: listData, isLoading: listLoading } = useUsers();
+  const list = Array.isArray(listData) ? listData : [];
   const [showAdd, setShowAdd] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const [addForm, setAddForm] = useState({ full_name: '', email: '', password: '', role: 'USER' });
 
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((u) => {
-        if (!u || (u.role !== 'ADMIN' && u.role !== 'STAFF')) {
-          router.replace('/login');
-          return;
-        }
-        if (u.tenant?.subscription_status === 'PENDING_PAYMENT') {
-          router.replace('/pending-subscription');
-          return;
-        }
-        if (u.tenant?.subscription_status === 'SUSPENDED') {
-          router.replace('/suspended');
-          return;
-        }
-        setUser(u);
-        return fetch('/api/users', { credentials: 'include' }).then((r) => r.json());
-      })
-      .then((data) => Array.isArray(data) && setList(data))
-      .catch(() => router.replace('/login'))
-      .finally(() => setLoading(false));
-  }, [router]);
+    if (userLoading || user == null) return;
+    if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') {
+      router.replace('/login');
+      return;
+    }
+    if (user?.tenant?.subscription_status === 'PENDING_PAYMENT') {
+      router.replace('/pending-subscription');
+      return;
+    }
+    if (user?.tenant?.subscription_status === 'SUSPENDED') {
+      router.replace('/suspended');
+      return;
+    }
+  }, [user, userLoading, router]);
+
+  useEffect(() => {
+    if (userError) router.replace('/login');
+  }, [userError, router]);
 
   async function handleAddUser(e) {
     e.preventDefault();
@@ -78,7 +78,7 @@ export default function AdminUsersPage() {
         toast.error(data.error || 'Failed to add user');
         return;
       }
-      setList((prev) => [data, ...prev]);
+      queryClient.setQueryData(['users', 'all'], (prev) => (Array.isArray(prev) ? [data, ...prev] : [data]));
       setAddForm({ full_name: '', email: '', password: '', role: 'USER' });
       setShowAdd(false);
       toast.success('User added');
@@ -87,17 +87,10 @@ export default function AdminUsersPage() {
     }
   }
 
-  if (!user && !loading) return null;
-  if (loading) {
-    return (
-      <AppLayout user={user} title="Customers" subtitle="Manage customers and staff">
-        <TableSkeleton rows={8} cols={5} />
-      </AppLayout>
-    );
-  }
+  if (!user && !userLoading) return null;
+  if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') return null;
 
   const isAdmin = user?.role === 'ADMIN';
-
   const columns = [
     { id: 'full_name', label: 'Name', sortable: true, render: (val, row) => <span className="font-medium text-foreground">{val || '—'}</span> },
     { id: 'email', label: 'Email', sortable: true, className: 'text-muted-foreground' },
@@ -128,7 +121,7 @@ export default function AdminUsersPage() {
   ];
 
   return (
-    <AppLayout user={user} title="Customers" subtitle="Manage customers and staff">
+    <AppLayout user={user ?? undefined} title="Customers" subtitle="Manage customers and staff" contentClassName="max-w-7xl mx-auto">
       <div className="space-y-6">
         <Breadcrumb>
           <BreadcrumbList>
@@ -152,14 +145,14 @@ export default function AdminUsersPage() {
             <LayoutDashboard className="h-4 w-4" />
             Overview
           </Link>
-          {isAdmin && (
+          {user?.role === 'ADMIN' && (
             <Button onClick={() => setShowAdd((v) => !v)} variant={showAdd ? 'secondary' : 'default'}>
               {showAdd ? 'Cancel' : 'Add user'}
             </Button>
           )}
         </div>
 
-        {showAdd && isAdmin && (
+        {showAdd && user?.role === 'ADMIN' && (
           <div className="card p-6">
             <h3 className="section-title mb-4">Add user</h3>
             <form onSubmit={handleAddUser} className="grid gap-4 sm:grid-cols-2 max-w-2xl">
@@ -220,40 +213,44 @@ export default function AdminUsersPage() {
           </div>
         )}
 
-        <DataTable
-          columns={columns}
-          data={list}
-          searchPlaceholder="Search by name or email..."
-          searchKeys={['full_name', 'email']}
-          initialSort={{ key: 'full_name', dir: 'asc' }}
-          stickyHeader
-          emptyMessage="No users yet. Add customers or staff above."
-          pagination
-          defaultPageSize={10}
-          renderActions={(row) => (
-            <div className="flex items-center justify-end gap-1">
-              <Link href={`/admin/users?view=${row.id}`}>
-                <Button variant="ghost" size="icon" className="h-8 w-8" title="View">
-                  <Eye className="h-4 w-4" />
-                </Button>
-              </Link>
-              {isAdmin && (
-                <>
-                  <Link href={`/admin/users?edit=${row.id}`}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Link href={`/admin/users?suspend=${row.id}`}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" title="Suspend">
-                      <UserX className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
-          )}
-        />
+        {listLoading ? (
+          <TableSkeleton rows={8} cols={5} />
+        ) : (
+          <DataTable
+            columns={columns}
+            data={list}
+            searchPlaceholder="Search by name or email..."
+            searchKeys={['full_name', 'email']}
+            initialSort={{ key: 'full_name', dir: 'asc' }}
+            stickyHeader
+            emptyMessage="No users yet. Add customers or staff above."
+            pagination
+            defaultPageSize={10}
+            renderActions={(row) => (
+              <div className="flex items-center justify-end gap-1">
+                <Link href={`/admin/users?view=${row.id}`}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" title="View">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </Link>
+                {user?.role === 'ADMIN' && (
+                  <>
+                    <Link href={`/admin/users?edit=${row.id}`}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Link href={`/admin/users?suspend=${row.id}`}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" title="Suspend">
+                        <UserX className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          />
+        )}
       </div>
     </AppLayout>
   );

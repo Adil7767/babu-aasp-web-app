@@ -1,48 +1,42 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ChevronRight } from 'lucide-react';
 import AppLayout from '../components/AppLayout';
 import { AdminOverviewSkeleton } from '../components/ContentSkeletons';
+import { useAuthMe } from '../hooks/useAuthMe';
+import { useStats } from '../hooks/useStats';
 
 export default function AdminPage() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: user, isLoading: userLoading, isError: userError } = useAuthMe();
+  const { data: stats, isLoading: statsLoading } = useStats(!!user && (user?.role === 'ADMIN' || user?.role === 'STAFF'));
 
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((u) => {
-        if (!u || (u.role !== 'ADMIN' && u.role !== 'STAFF')) {
-          router.replace('/login');
-          return;
-        }
-        if (u.tenant?.subscription_status === 'PENDING_PAYMENT') {
-          router.replace('/pending-subscription');
-          return;
-        }
-        if (u.tenant?.subscription_status === 'SUSPENDED') {
-          router.replace('/suspended');
-          return;
-        }
-        setUser(u);
-        return fetch('/api/stats', { credentials: 'include' }).then((r) => {
-          if (r.status === 402) {
-            router.replace('/renew-subscription');
-            return null;
-          }
-          return r.ok ? r.json() : null;
-        });
-      })
-      .then(setStats)
-      .catch(() => router.replace('/login'))
-      .finally(() => setLoading(false));
-  }, [router]);
+    if (userLoading || user == null) return;
+    if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') {
+      router.replace('/login');
+      return;
+    }
+    if (user?.tenant?.subscription_status === 'PENDING_PAYMENT') {
+      router.replace('/pending-subscription');
+      return;
+    }
+    if (user?.tenant?.subscription_status === 'SUSPENDED') {
+      router.replace('/suspended');
+      return;
+    }
+    if (stats === null && !statsLoading) {
+      router.replace('/renew-subscription');
+    }
+  }, [user, userLoading, stats, statsLoading, router]);
+
+  useEffect(() => {
+    if (userError) router.replace('/login');
+  }, [userError, router]);
 
   const financeChartData = useMemo(() => {
     if (!stats) return [];
@@ -63,17 +57,14 @@ export default function AdminPage() {
     return data.length ? data : [{ name: 'None', value: 1, fill: '#94a3b8' }];
   }, [stats]);
 
-  if (!user && !loading) return null;
-  if (loading) {
-    return (
-      <AppLayout user={user} title="Admin">
-        <AdminOverviewSkeleton />
-      </AppLayout>
-    );
-  }
+  if (!user && !userLoading) return null;
+  if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') return null;
 
   return (
-    <AppLayout user={user} title="Admin">
+    <AppLayout user={user ?? undefined} title="Admin">
+      {statsLoading || !stats ? (
+        <AdminOverviewSkeleton />
+      ) : (
       <div className="space-y-8">
         {stats && (
           <>
@@ -177,6 +168,7 @@ export default function AdminPage() {
           </Link>
         </div>
       </div>
+      )}
     </AppLayout>
   );
 }

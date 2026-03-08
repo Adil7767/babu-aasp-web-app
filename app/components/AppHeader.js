@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,58 +14,22 @@ import {
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
 import { cn } from '@/lib/utils';
 import { User, Home, LogOut, ChevronDown, Search, Bell } from 'lucide-react';
 
-function useBreadcrumb(pathname, user) {
-  if (!pathname) return [];
-  const segments = pathname.split('/').filter(Boolean);
-  const role = user?.role;
-  const homeLabel = role === 'SUPER_ADMIN' ? 'Super Admin' : role === 'ADMIN' || role === 'STAFF' ? 'Admin' : 'Dashboard';
-  const homeHref = role === 'SUPER_ADMIN' ? '/super-admin' : role === 'ADMIN' || role === 'STAFF' ? '/admin' : '/dashboard';
-  const items = [{ label: homeLabel, href: homeHref }];
-  const labels = {
-    users: 'Customers',
-    packages: 'Packages',
-    complaints: 'Complaints',
-    profile: 'Settings',
-    dashboard: 'Dashboard',
-    'super-admin': 'Super Admin',
-    admin: 'Admin',
-  };
-  let href = '';
-  for (let i = 0; i < segments.length; i++) {
-    href += (href ? '/' : '') + segments[i];
-    const last = i === segments.length - 1;
-    const label = labels[segments[i]] || segments[i].charAt(0).toUpperCase() + segments[i].slice(1);
-    items.push({ label, href: last ? null : href });
-  }
-  return items;
-}
-
-export default function AppHeader({ user, title, subtitle, breadcrumbItems, className }) {
-  const pathname = usePathname();
+export default function AppHeader({ user, title, subtitle, className }) {
   const isSuperAdmin = user?.role === 'SUPER_ADMIN';
   const isAdminOrStaff = user?.role === 'ADMIN' || user?.role === 'STAFF';
   const homeHref = isSuperAdmin ? '/super-admin' : isAdminOrStaff ? '/admin' : '/dashboard';
   const avatarUrl = user?.avatar_url;
   const initial = (user?.full_name || 'U').charAt(0).toUpperCase();
   const loading = !user;
-  const breadcrumb = breadcrumbItems ?? useBreadcrumb(pathname, user);
 
   return (
     <header className={cn('h-16 shrink-0 z-30 w-full flex items-center', className)}>
-      <div className="flex h-14 sm:h-16 items-center gap-3 px-4 sm:px-6">
+      <div className="flex h-16 items-center  w-full">
         <div className="flex items-center gap-2 shrink-0">
-          <SidebarTrigger className="rounded-xl min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9 -ml-1" />
+          <SidebarTrigger className="rounded-xl min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9" />
         </div>
 
         {/* Search - visible on md+ */}
@@ -93,28 +56,6 @@ export default function AppHeader({ user, title, subtitle, breadcrumbItems, clas
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-danger ring-2 ring-card" aria-hidden />
             </button>
           )}
-
-          {/* Breadcrumb - visible when no search or on small screens */}
-          <div className="hidden lg:flex items-center min-w-0">
-            <Breadcrumb>
-              <BreadcrumbList className="text-xs">
-                {breadcrumb.map((item, i) => (
-                  <BreadcrumbItem key={i}>
-                    {i > 0 && <BreadcrumbSeparator />}
-                    {item.href ? (
-                      <BreadcrumbLink asChild>
-                        <Link href={item.href}>{item.label}</Link>
-                      </BreadcrumbLink>
-                    ) : (
-                      <BreadcrumbPage className="font-medium text-foreground truncate max-w-[120px]">
-                        {item.label}
-                      </BreadcrumbPage>
-                    )}
-                  </BreadcrumbItem>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
 
           {/* Profile dropdown */}
           {loading ? (

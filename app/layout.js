@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { QueryProvider } from './providers/QueryProvider';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={jakarta.variable} suppressHydrationWarning>
       <body className="min-h-screen font-sans bg-background text-foreground" suppressHydrationWarning>
+        <QueryProvider>
         <TooltipProvider>
           <SidebarProvider>
             {children}
@@ -38,6 +40,7 @@ export default function RootLayout({ children }) {
           />
           </SidebarProvider>
         </TooltipProvider>
+        </QueryProvider>
       </body>
     </html>
   );

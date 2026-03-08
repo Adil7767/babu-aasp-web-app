@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +17,6 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -56,16 +55,16 @@ const USER_NAV = [
 
 export default function AppSidebar({ user }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { setOpenMobile, isMobile } = useSidebar();
   const role = user?.role || 'USER';
+  const currentFull = `${(pathname || '').replace(/\/$/, '') || '/'}${searchParams?.toString() ? `?${searchParams.toString()}` : ''}`;
   const items =
     role === 'SUPER_ADMIN'
       ? SUPER_ADMIN_NAV
       : role === 'ADMIN' || role === 'STAFF'
         ? ADMIN_NAV
         : USER_NAV;
-  const loading = !user;
-
   useEffect(() => {
     if (isMobile) setOpenMobile(false);
   }, [pathname, isMobile, setOpenMobile]);
@@ -83,7 +82,7 @@ export default function AppSidebar({ user }) {
       side="left"
       className="border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-out"
     >
-      <SidebarHeader className="shrink-0 border-b border-sidebar-border/80 px-4 py-4">
+      <SidebarHeader className="flex h-16 min-h-16 shrink-0 flex-row items-center border-b border-sidebar-border px-4 py-0">
         <Link
           href={homeHref}
           className="flex items-center gap-3 outline-none rounded-xl focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar transition-opacity hover:opacity-90"
@@ -103,22 +102,23 @@ export default function AppSidebar({ user }) {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
-              {loading ? (
-                <>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <SidebarMenuItem key={i}>
-                      <Skeleton className="h-11 w-full rounded-xl" />
-                    </SidebarMenuItem>
-                  ))}
-                </>
-              ) : (
-                items.map((item) => {
-                  const normalizedPath = (pathname || '').split('?')[0].replace(/\/$/, '') || '/';
-                  const itemPath = item.href.split('?')[0];
-                  const active = item.exact
-                    ? normalizedPath === itemPath
-                    : normalizedPath === itemPath ||
-                      (itemPath !== '/' && normalizedPath.startsWith(itemPath));
+              {items.map((item, index) => {
+                  const itemHref = item.href;
+                  const normalizedPath = (pathname || '').replace(/\/$/, '') || '/';
+                  const itemPath = itemHref.split('?')[0];
+                  const itemQuery = itemHref.includes('?') ? itemHref.split('?')[1] || '' : '';
+                  const currentQuery = searchParams?.toString() || '';
+                  const pathMatch = item.exact ? normalizedPath === itemPath : (normalizedPath === itemPath || (itemPath !== '/' && normalizedPath.startsWith(itemPath)));
+                  const queryMatch = itemQuery ? currentQuery === itemQuery : currentQuery === '';
+                  const wouldMatch = pathMatch && queryMatch;
+                  const firstMatchIndex = items.findIndex((i) => {
+                    const p = i.href.split('?')[0];
+                    const q = i.href.includes('?') ? i.href.split('?')[1] || '' : '';
+                    const pathM = i.exact ? normalizedPath === p : (normalizedPath === p || (p !== '/' && normalizedPath.startsWith(p)));
+                    const queryM = q ? currentQuery === q : currentQuery === '';
+                    return pathM && queryM;
+                  });
+                  const active = wouldMatch && firstMatchIndex === index;
                   const Icon = item.icon;
                   return (
                     <SidebarMenuItem
@@ -147,8 +147,7 @@ export default function AppSidebar({ user }) {
                       />
                     </SidebarMenuItem>
                   );
-                })
-              )}
+                })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -156,32 +155,27 @@ export default function AppSidebar({ user }) {
       <SidebarFooter className="border-t border-sidebar-border/80 px-3 py-4">
         <SidebarMenu className="gap-0.5">
           <SidebarMenuItem
-            data-active={!loading && pathname === '/profile' ? 'true' : undefined}
+            data-active={pathname === '/profile' ? 'true' : undefined}
             className={cn(
-              !loading &&
-                pathname === '/profile' &&
+              pathname === '/profile' &&
                 '!bg-sidebar-accent rounded-xl [&>*]:!bg-transparent [&_a]:!bg-transparent [&_a]:font-semibold [&_a]:text-sidebar-accent-foreground'
             )}
           >
-            {loading ? (
-              <Skeleton className="h-11 w-full rounded-xl" />
-            ) : (
-              <SidebarMenuButton
-                render={
-                  <Link
-                    href="/profile"
-                    className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px] transition-colors hover:bg-sidebar-accent/80"
-                  >
-                    <Settings className="h-5 w-5 shrink-0" />
-                    <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
-                      Settings
-                    </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 ml-auto opacity-50 group-data-[collapsible=icon]:hidden" />
-                  </Link>
-                }
-                isActive={pathname === '/profile'}
-              />
-            )}
+            <SidebarMenuButton
+              render={
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px] transition-colors hover:bg-sidebar-accent/80"
+                >
+                  <Settings className="h-5 w-5 shrink-0" />
+                  <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
+                    Settings
+                  </span>
+                  <ChevronRight className="h-4 w-4 shrink-0 ml-auto opacity-50 group-data-[collapsible=icon]:hidden" />
+                </Link>
+              }
+              isActive={pathname === '/profile'}
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

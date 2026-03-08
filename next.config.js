@@ -6,6 +6,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      { source: '/v1/api/:path*', destination: '/api/:path*' },
+      { source: '/v1/docs', destination: '/api-docs' },
+      { source: '/v1/docs/', destination: '/api-docs' },
+    ];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '6mb',
