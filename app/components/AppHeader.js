@@ -23,6 +23,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { cn } from '@/lib/utils';
 import { User, Home, LogOut, ChevronDown, Search, Bell } from 'lucide-react';
 
 function useBreadcrumb(pathname, user) {
@@ -51,7 +52,7 @@ function useBreadcrumb(pathname, user) {
   return items;
 }
 
-export default function AppHeader({ user, title, subtitle, breadcrumbItems }) {
+export default function AppHeader({ user, title, subtitle, breadcrumbItems, className }) {
   const pathname = usePathname();
   const isSuperAdmin = user?.role === 'SUPER_ADMIN';
   const isAdminOrStaff = user?.role === 'ADMIN' || user?.role === 'STAFF';
@@ -62,7 +63,7 @@ export default function AppHeader({ user, title, subtitle, breadcrumbItems }) {
   const breadcrumb = breadcrumbItems ?? useBreadcrumb(pathname, user);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur-md shadow-sm">
+    <header className={cn('h-16 shrink-0 z-30 w-full flex items-center', className)}>
       <div className="flex h-14 sm:h-16 items-center gap-3 px-4 sm:px-6">
         <div className="flex items-center gap-2 shrink-0">
           <SidebarTrigger className="rounded-xl min-h-[44px] min-w-[44px] sm:min-h-9 sm:min-w-9 -ml-1" />

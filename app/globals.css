@@ -63,6 +63,7 @@
     --radius: 0.75rem;
     --radius-lg: 1rem;
     --radius-xl: 1.25rem;
+    --header-height: 4rem;
     --sidebar: oklch(0.94 0.035 220);
     --sidebar-foreground: oklch(0.28 0.02 260);
     --sidebar-primary: oklch(0.52 0.14 175);
