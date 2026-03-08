@@ -133,7 +133,7 @@ export default function SuperAdminPage() {
       <div className="space-y-8">
         {stats && (
           <>
-            <section>
+            <section id="overview">
               <h2 className="section-title mb-4">Platform overview</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="card-tinted border-l-4 border-l-primary shadow-md">
@@ -203,7 +203,7 @@ export default function SuperAdminPage() {
           </>
         )}
 
-        <section>
+        <section id="tenants">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <h2 className="section-title">Tenants (ISPs)</h2>
             <button
@@ -293,7 +293,7 @@ export default function SuperAdminPage() {
           </div>
         </section>
 
-        <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+        <div id="plans" className="rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
           <p className="font-medium text-foreground mb-1">Plans (monthly, PKR)</p>
           <ul className="list-disc list-inside space-y-0.5">
             <li>Starter: PKR 1,000/mo · 200 customers</li>

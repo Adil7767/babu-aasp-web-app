@@ -45,7 +45,9 @@ const ADMIN_NAV = [
 
 const SUPER_ADMIN_NAV = [
   { href: '/super-admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/super-admin#tenants', label: 'Tenants', icon: Building2 },
+  { href: '/super-admin#overview', label: 'Platform overview', icon: BarChart3 },
+  { href: '/super-admin#tenants', label: 'Tenants (approve)', icon: Building2 },
+  { href: '/super-admin#plans', label: 'Plans & income', icon: CreditCard },
 ];
 
 const USER_NAV = [
@@ -57,7 +59,13 @@ export default function AppSidebar({ user }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { setOpenMobile, isMobile } = useSidebar();
-  const role = user?.role || 'USER';
+  // Use pathname when user is loading so we don't flash USER_NAV (Dashboard + Support only) on admin pages
+  const roleFromPath = (pathname || '').startsWith('/super-admin')
+    ? 'SUPER_ADMIN'
+    : (pathname || '').startsWith('/admin')
+      ? 'ADMIN'
+      : 'USER';
+  const role = user?.role || roleFromPath;
   const currentFull = `${(pathname || '').replace(/\/$/, '') || '/'}${searchParams?.toString() ? `?${searchParams.toString()}` : ''}`;
   const items =
     role === 'SUPER_ADMIN'
@@ -86,6 +94,7 @@ export default function AppSidebar({ user }) {
         <Link
           href={homeHref}
           className="flex items-center gap-3 outline-none rounded-xl focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar transition-opacity hover:opacity-90"
+          onClick={() => isMobile && setOpenMobile(false)}
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-sidebar-accent ring-1 ring-sidebar-border">
             <Image src="/appicon.png" alt="" width={40} height={40} className="object-contain" />
@@ -135,6 +144,7 @@ export default function AppSidebar({ user }) {
                             href={item.href}
                             className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px] transition-colors hover:bg-sidebar-accent/80"
                             data-active={active ? 'true' : undefined}
+                            onClick={() => isMobile && setOpenMobile(false)}
                           >
                             {Icon && <Icon className="h-5 w-5 shrink-0" />}
                             <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
@@ -166,6 +176,7 @@ export default function AppSidebar({ user }) {
                 <Link
                   href="/profile"
                   className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px] transition-colors hover:bg-sidebar-accent/80"
+                  onClick={() => isMobile && setOpenMobile(false)}
                 >
                   <Settings className="h-5 w-5 shrink-0" />
                   <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
