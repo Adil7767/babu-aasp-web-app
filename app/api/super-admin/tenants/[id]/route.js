@@ -11,6 +11,9 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
   const id = await params.id;
+  if (!id) {
+    return NextResponse.json({ error: 'Tenant ID required' }, { status: 400 });
+  }
   try {
     const body = await request.json();
     const { action, plan } = body;

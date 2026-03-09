@@ -87,8 +87,20 @@ export default function AdminUsersPage() {
     }
   }
 
-  if (!user && !userLoading) return null;
-  if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') return null;
+  if (!user && !userLoading) {
+    return (
+      <AppLayout user={undefined} title="Customers">
+        <TableSkeleton rows={8} cols={5} />
+      </AppLayout>
+    );
+  }
+  if (user && user.role !== 'ADMIN' && user.role !== 'STAFF') {
+    return (
+      <AppLayout user={user ?? undefined} title="Customers">
+        <TableSkeleton rows={8} cols={5} />
+      </AppLayout>
+    );
+  }
 
   const isAdmin = user?.role === 'ADMIN';
   const columns = [

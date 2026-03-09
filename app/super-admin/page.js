@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import AppLayout from '../components/AppLayout';
 import { SuperAdminSkeleton } from '../components/ContentSkeletons';
@@ -19,6 +20,7 @@ export default function SuperAdminPage() {
   const [addError, setAddError] = useState('');
   const [addLoading, setAddLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
+  const [plansData, setPlansData] = useState(null);
 
   function loadData() {
     fetch('/api/auth/me', { credentials: 'include' })
@@ -32,11 +34,13 @@ export default function SuperAdminPage() {
         return Promise.all([
           fetch('/api/super-admin/stats', { credentials: 'include' }).then((r) => (r.ok ? r.json() : null)),
           fetch('/api/super-admin/tenants', { credentials: 'include' }).then((r) => (r.ok ? r.json() : [])),
+          fetch('/api/plans?payment_details=true', { credentials: 'include' }).then((r) => (r.ok ? r.json() : null)),
         ]);
       })
-      .then(([statsData, tenantsList]) => {
+      .then(([statsData, tenantsList, plans]) => {
         if (statsData) setStats(statsData);
         if (Array.isArray(tenantsList)) setTenants(tenantsList);
+        if (plans) setPlansData(plans);
       })
       .catch(() => router.replace('/'))
       .finally(() => setLoading(false));
@@ -77,6 +81,10 @@ export default function SuperAdminPage() {
   }
 
   async function handleTenantAction(tenantId, action) {
+    if (!tenantId) {
+      toast.error('Invalid tenant');
+      return;
+    }
     setActionLoading(tenantId);
     try {
       const res = await fetch(`/api/super-admin/tenants/${tenantId}`, {
@@ -85,11 +93,15 @@ export default function SuperAdminPage() {
         credentials: 'include',
         body: JSON.stringify({ action }),
       });
-      if (res.ok) loadData();
-      else {
-        const data = await res.json();
-        alert(data.error || 'Action failed');
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        toast.success(data.message || (action === 'approve' ? 'Tenant approved' : 'Done'));
+        loadData();
+      } else {
+        toast.error(data.error || data.detail || `Action failed (${res.status})`);
       }
+    } catch (e) {
+      toast.error(e.message || 'Request failed');
     } finally {
       setActionLoading(null);
     }
@@ -293,14 +305,42 @@ export default function SuperAdminPage() {
           </div>
         </section>
 
-        <div id="plans" className="rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-          <p className="font-medium text-foreground mb-1">Plans (monthly, PKR)</p>
-          <ul className="list-disc list-inside space-y-0.5">
-            <li>Starter: PKR 1,000/mo · 200 customers</li>
-            <li>Professional: PKR 2,000/mo · 1,000 customers</li>
-            <li>Enterprise: PKR 3,000/mo · Unlimited</li>
-          </ul>
-        </div>
+        <section id="plans" className="card shadow-md">
+          <h3 className="section-title mb-3">Plans & billing</h3>
+          <p className="text-sm text-muted-foreground mb-3">Monthly prices (PKR) and payment instructions shown to tenants.</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="font-medium text-foreground mb-2">Plan prices</p>
+              <ul className="space-y-1.5 text-sm">
+                {(plansData?.plans || [
+                  { id: 'STARTER', name: 'Starter', monthly_price_pkr: 1000, customer_limit: 200 },
+                  { id: 'PROFESSIONAL', name: 'Professional', monthly_price_pkr: 2000, customer_limit: 1000 },
+                  { id: 'ENTERPRISE', name: 'Enterprise', monthly_price_pkr: 3000, customer_limit: 0 },
+                ]).map((p) => (
+                  <li key={p.id} className="flex justify-between">
+                    <span>{p.name}</span>
+                    <span className="font-medium text-foreground">PKR {(p.monthly_price_pkr ?? 0).toLocaleString()}/mo · {p.customer_limit === 0 ? 'Unlimited' : p.customer_limit} customers</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-medium text-foreground mb-2">Payment instructions (for tenants)</p>
+              <div className="text-sm text-muted-foreground space-y-1">
+                {plansData?.payment_instructions ? (
+                  <>
+                    {plansData.payment_instructions.jazzcash ? <p><strong>JazzCash:</strong> {plansData.payment_instructions.jazzcash}</p> : null}
+                    {plansData.payment_instructions.easypaisa ? <p><strong>EasyPaisa:</strong> {plansData.payment_instructions.easypaisa}</p> : null}
+                    {plansData.payment_instructions.bank ? <p><strong>Bank:</strong> {plansData.payment_instructions.bank}</p> : null}
+                    {!plansData.payment_instructions.jazzcash && !plansData.payment_instructions.easypaisa && !plansData.payment_instructions.bank ? <p>Set PLATFORM_JAZZCASH_NUMBER, PLATFORM_EAZYPAISA_NUMBER, PLATFORM_BANK_DETAILS in env.</p> : null}
+                  </>
+                ) : (
+                  <p>Load payment details from API (env vars for JazzCash, EasyPaisa, Bank).</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
 
         {addOpen && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-900/50 px-4" onClick={() => !addLoading && setAddOpen(false)}>

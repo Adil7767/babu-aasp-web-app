@@ -6,6 +6,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      { source: '/admin/user', destination: '/admin/users', permanent: false },
+      { source: '/admin/user/:path*', destination: '/admin/users/:path*', permanent: false },
+    ];
+  },
   async rewrites() {
     return [
       { source: '/v1/api/:path*', destination: '/api/:path*' },

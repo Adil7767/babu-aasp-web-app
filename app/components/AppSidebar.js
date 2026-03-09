@@ -142,7 +142,7 @@ export default function AppSidebar({ user }) {
                         render={
                           <Link
                             href={item.href}
-                            className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px] transition-colors hover:bg-sidebar-accent/80"
+                            className="flex items-center gap-3 py-2.5 px-3 rounded-xl min-h-[44px] transition-colors hover:bg-sidebar-accent/80 w-full cursor-pointer"
                             data-active={active ? 'true' : undefined}
                             onClick={() => isMobile && setOpenMobile(false)}
                           >
